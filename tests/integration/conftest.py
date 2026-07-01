@@ -19,6 +19,13 @@ def database_is_available() -> bool:
     return True
 
 
+@pytest.fixture(autouse=True)
+def isolate_admin_env(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Keep admin integration tests independent from developer .env values."""
+    monkeypatch.delenv("ADMIN_EMAIL", raising=False)
+    monkeypatch.delenv("ADMIN_PASSWORD", raising=False)
+
+
 @pytest.fixture
 def requires_postgres() -> None:
     if not database_is_available():

@@ -1,6 +1,5 @@
 """Integration tests for authorization flow."""
 
-import os
 from uuid import uuid4
 
 import pytest
@@ -15,9 +14,13 @@ from domain.exceptions import AuthorizationError, UnauthenticatedError
 from domain.services.authorization import Permission
 from infrastructure.db.engine import create_db_engine
 from infrastructure.db.repositories import SqlAlchemySessionRepository, SqlAlchemyUserRepository
-from infrastructure.db.seed_admin import seed_admin_user
 from infrastructure.security.scrypt_password_hasher import ScryptPasswordHasher
 from infrastructure.security.sha256_session_token import Sha256SessionTokenService
+from integration.admin_helpers import (
+    create_test_admin_email,
+    login_test_admin,
+    seed_test_admin,
+)
 from integration.conftest import database_is_available
 
 
@@ -68,7 +71,7 @@ def test_admin_can_list_users_after_seed() -> None:
     if not database_is_available():
         pytest.skip("PostgreSQL is not available")
 
-    os.environ.setdefault("ADMIN_PASSWORD", "secure1Admin")
+    admin_email = create_test_admin_email()
     engine = create_db_engine()
     hasher = ScryptPasswordHasher()
     token_service = Sha256SessionTokenService()
@@ -76,13 +79,14 @@ def test_admin_can_list_users_after_seed() -> None:
     with OrmSession(engine) as db_session:
         user_repository = SqlAlchemyUserRepository(db_session)
         session_repository = SqlAlchemySessionRepository(db_session)
-        seed_admin_user(user_repository, hasher)
-        login_result = LoginUserUseCase(
+        seed_test_admin(user_repository, hasher, admin_email)
+        login_result = login_test_admin(
             user_repository,
             session_repository,
             hasher,
             token_service,
-        ).execute(os.getenv("ADMIN_EMAIL", "admin@reps.local"), "secure1Admin")
+            admin_email,
+        )
         db_session.commit()
 
         result = _build_guard(user_repository, session_repository).authorize(

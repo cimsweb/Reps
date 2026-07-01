@@ -33,6 +33,10 @@ def _build_user(role: Role) -> User:
         (Role.ADMIN, Permission.VIEW_OWN_ACCOUNT, True),
         (Role.COACH, Permission.VIEW_OWN_ACCOUNT, True),
         (Role.ATHLETE, Permission.VIEW_OWN_ACCOUNT, True),
+        (Role.COACH, Permission.VIEW_LINKED_ATHLETE_DATA, True),
+        (Role.ATHLETE, Permission.MANAGE_OWN_COACHING_DATA, True),
+        (Role.COACH, Permission.MANAGE_OWN_COACHING_DATA, False),
+        (Role.ATHLETE, Permission.VIEW_LINKED_ATHLETE_DATA, False),
     ],
 )
 def test_has_permission(role: Role, permission: Permission, expected: bool) -> None:

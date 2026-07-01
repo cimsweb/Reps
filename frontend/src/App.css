@@ -122,3 +122,157 @@ button:disabled {
     margin: 0;
     font-weight: 600;
 }
+
+.section {
+    margin-bottom: 32px;
+    padding-top: 8px;
+    border-top: 1px solid #e4ebf3;
+}
+
+.section:first-of-type {
+    border-top: none;
+    padding-top: 0;
+}
+
+.section h2 {
+    margin: 0 0 16px;
+    font-size: 1.1rem;
+}
+
+.inline-form {
+    grid-template-columns: 1fr auto;
+    align-items: end;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+    border-bottom: 1px solid #e4ebf3;
+    padding: 10px 8px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.badge-pending {
+    background: #fff4e5;
+    color: #9a6700;
+}
+
+.badge-accepted {
+    background: #e8f5ee;
+    color: #1a7f37;
+}
+
+.badge-declined {
+    background: #fdecec;
+    color: #b42318;
+}
+
+.link-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+}
+
+.link-list li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    padding: 12px;
+    border: 1px solid #e4ebf3;
+    border-radius: 10px;
+}
+
+.invitation-list,
+.feedback-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+}
+
+.invitation-item,
+.feedback-item {
+    padding: 12px;
+    border: 1px solid #e4ebf3;
+    border-radius: 10px;
+}
+
+.stack-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.button-secondary {
+    background: #eef3f9;
+    color: #142033;
+}
+
+.button-link {
+    background: transparent;
+    color: #1f6feb;
+    padding: 0;
+}
+
+.button-link.danger {
+    color: #b42318;
+}
+
+.table-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #c5d0de;
+    border-radius: 10px;
+    font: inherit;
+    resize: vertical;
+}
+
+.status.success {
+    color: #1a7f37;
+}
+
+@media (max-width: 640px) {
+    .dashboard-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .inline-form {
+        grid-template-columns: 1fr;
+    }
+
+    .link-list li,
+    .invitation-item {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .data-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}

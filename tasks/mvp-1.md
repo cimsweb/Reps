@@ -10,23 +10,23 @@
 
 ## Scope
 
-- [ ] Тренер приглашает спортсмена по email
-- [ ] Спортсмен оставляет обратную связь по итогу тренировки
-- [ ] Ссылки на отчёты в Garmin Connect
-- [ ] Профиль спортсмена: рост, вес, возраст, пол
-- [ ] Личные рекорды на дистанциях и в упражнениях
+- [x] Тренер приглашает спортсмена по email
+- [x] Спортсмен оставляет обратную связь по итогу тренировки
+- [x] Ссылки на отчёты в Garmin Connect
+- [x] Профиль спортсмена: рост, вес, возраст, пол
+- [x] Личные рекорды на дистанциях и в упражнениях
 
 ## Декомпозиция задач
 
 Выполнять строго по порядку. Код писать только после закрытия предыдущей задачи.
 
-| #   | Задача         | Файл                                                     |
-| --- | -------------- | -------------------------------------------------------- |
-| 1   | Project Setup  | [MVP1-001-project-setup.md](MVP1-001-project-setup.md)   |
-| 2   | Data Ingestion | [MVP1-002-data-ingestion.md](MVP1-002-data-ingestion.md) |
-| 3   | Indexing       | [MVP1-003-indexing.md](MVP1-003-indexing.md)             |
-| 4   | Search         | [MVP1-004-search.md](MVP1-004-search.md)                 |
-| 5   | UI             | [MVP1-005-ui.md](MVP1-005-ui.md)                         |
+| #   | Задача         | Файл                                                     | Статус |
+| --- | -------------- | -------------------------------------------------------- | ------ |
+| 1   | Project Setup  | [MVP1-001-project-setup.md](MVP1-001-project-setup.md)   | done   |
+| 2   | Data Ingestion | [MVP1-002-data-ingestion.md](MVP1-002-data-ingestion.md) | done   |
+| 3   | Indexing       | [MVP1-003-indexing.md](MVP1-003-indexing.md)             | done   |
+| 4   | Search         | [MVP1-004-search.md](MVP1-004-search.md)                 | done   |
+| 5   | UI             | [MVP1-005-ui.md](MVP1-005-ui.md)                         | done   |
 
 ```
 MVP 1 — Связка тренер ↔ спортсмен

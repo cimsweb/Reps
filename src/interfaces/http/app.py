@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from infrastructure.config.env import load_environment
 from interfaces.http.errors import register_exception_handlers
-from interfaces.http.routes import admin, auth
+from interfaces.http.routes import admin, auth, coaching
 
 load_environment()
 
@@ -26,6 +26,7 @@ def create_app() -> FastAPI:
     register_exception_handlers(app)
     app.include_router(auth.router, prefix=API_PREFIX)
     app.include_router(admin.router, prefix=API_PREFIX)
+    app.include_router(coaching.router, prefix=API_PREFIX)
     return app
 
 

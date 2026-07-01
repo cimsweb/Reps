@@ -4,6 +4,7 @@ import { AuthProvider } from "./auth/AuthContext.jsx";
 import { ProtectedRoute } from "./components/ProtectedRoute.jsx";
 import { AdminDashboard } from "./pages/AdminDashboard.jsx";
 import { AthleteDashboard } from "./pages/AthleteDashboard.jsx";
+import { CoachAthletePage } from "./pages/CoachAthletePage.jsx";
 import { CoachDashboard } from "./pages/CoachDashboard.jsx";
 import { LoginPage } from "./pages/LoginPage.jsx";
 import { RegisterPage } from "./pages/RegisterPage.jsx";
@@ -22,6 +23,7 @@ function App() {
           </Route>
           <Route element={<ProtectedRoute allowedRoles={["coach"]} />}>
             <Route path="/coach" element={<CoachDashboard />} />
+            <Route path="/coach/athletes/:athleteId" element={<CoachAthletePage />} />
           </Route>
           <Route element={<ProtectedRoute allowedRoles={["athlete"]} />}>
             <Route path="/athlete" element={<AthleteDashboard />} />

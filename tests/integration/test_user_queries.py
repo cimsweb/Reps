@@ -1,6 +1,5 @@
 """Integration tests for user query use cases."""
 
-import os
 from uuid import uuid4
 
 import pytest
@@ -18,9 +17,13 @@ from domain.services.authorization import Permission
 from domain.value_objects.pagination import PageRequest
 from infrastructure.db.engine import create_db_engine
 from infrastructure.db.repositories import SqlAlchemySessionRepository, SqlAlchemyUserRepository
-from infrastructure.db.seed_admin import seed_admin_user
 from infrastructure.security.scrypt_password_hasher import ScryptPasswordHasher
 from infrastructure.security.sha256_session_token import Sha256SessionTokenService
+from integration.admin_helpers import (
+    create_test_admin_email,
+    login_test_admin,
+    seed_test_admin,
+)
 from integration.conftest import database_is_available
 
 
@@ -74,7 +77,7 @@ def test_admin_lists_users_with_pagination() -> None:
     if not database_is_available():
         pytest.skip("PostgreSQL is not available")
 
-    os.environ.setdefault("ADMIN_PASSWORD", "secure1Admin")
+    admin_email = create_test_admin_email()
     engine = create_db_engine()
     hasher = ScryptPasswordHasher()
     token_service = Sha256SessionTokenService()
@@ -82,19 +85,20 @@ def test_admin_lists_users_with_pagination() -> None:
     with OrmSession(engine) as db_session:
         user_repository = SqlAlchemyUserRepository(db_session)
         session_repository = SqlAlchemySessionRepository(db_session)
-        seed_admin_user(user_repository, hasher)
+        seed_test_admin(user_repository, hasher, admin_email)
         for index in range(3):
             RegisterUserUseCase(user_repository, hasher).execute(
                 f"athlete{index}-{uuid4()}@example.com",
                 "secure1A",
                 Role.ATHLETE,
             )
-        login_result = LoginUserUseCase(
+        login_result = login_test_admin(
             user_repository,
             session_repository,
             hasher,
             token_service,
-        ).execute(os.getenv("ADMIN_EMAIL", "admin@reps.local"), "secure1Admin")
+            admin_email,
+        )
         db_session.commit()
 
         _build_guard(user_repository, session_repository).authorize(

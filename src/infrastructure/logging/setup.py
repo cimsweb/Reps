@@ -79,3 +79,20 @@ def log_authorization_check(
         role=role,
         message=f"Authorization check for route '{route}'",
     )
+
+
+def log_coaching_event(
+    logger: logging.Logger,
+    event: str,
+    *,
+    success: bool,
+    user_id: str | None = None,
+    message: str,
+) -> None:
+    """Log coaching-related events in a uniform format."""
+    level = logging.INFO if success else logging.WARNING
+    logger.log(
+        level,
+        message,
+        extra={"event": event, "success": success, "user_id": user_id},
+    )

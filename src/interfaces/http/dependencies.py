@@ -5,7 +5,9 @@ from fastapi import Depends, Header, HTTPException
 from sqlalchemy.orm import Session
 
 from application.security.authorization_guard import AuthorizationGuard
+from application.security.coaching_access_guard import CoachingAccessGuard
 from application.use_cases.authenticate_session import AuthenticateSessionUseCase
+from infrastructure.db.coaching_repositories import SqlAlchemyCoachAthleteLinkRepository
 from infrastructure.db.engine import create_db_engine
 from infrastructure.db.repositories import SqlAlchemySessionRepository, SqlAlchemyUserRepository
 from infrastructure.security.scrypt_password_hasher import ScryptPasswordHasher
@@ -53,6 +55,13 @@ def get_authorization_guard(db: DbSession) -> AuthorizationGuard:
 
 
 AuthorizationGuardDep = Annotated[AuthorizationGuard, Depends(get_authorization_guard)]
+
+
+def get_coaching_access_guard(db: DbSession) -> CoachingAccessGuard:
+    return CoachingAccessGuard(SqlAlchemyCoachAthleteLinkRepository(db))
+
+
+CoachingAccessGuardDep = Annotated[CoachingAccessGuard, Depends(get_coaching_access_guard)]
 
 
 def get_bearer_token(authorization: Annotated[str | None, Header()] = None) -> str:
