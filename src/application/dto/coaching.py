@@ -107,7 +107,6 @@ class WorkoutFeedbackView:
     id: str
     athlete_id: str
     text: str
-    garmin_url: str | None
     created_at: datetime
 
     @classmethod
@@ -116,7 +115,6 @@ class WorkoutFeedbackView:
             id=str(feedback.id.value),
             athlete_id=str(feedback.athlete_id.value),
             text=feedback.text,
-            garmin_url=str(feedback.garmin_url) if feedback.garmin_url else None,
             created_at=feedback.created_at,
         )
 

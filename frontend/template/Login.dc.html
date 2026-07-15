@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; font-family: 'Manrope', sans-serif; }
+    body { margin:0; }
+  </style>
+</helmet>
+
+<div style="{{ pageStyle }}">
+  <div style="width:400px; max-width:100%; background:var(--card); border-radius:24px; padding:36px 32px; position:relative;">
+
+    <div onClick="{{ toggleTheme }}" style="position:absolute; top:24px; right:24px; cursor:pointer; font-size:16px;">{{ themeIcon }}</div>
+
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:28px;">
+      <div style="width:38px; height:38px; border-radius:11px; background:#1f9d55; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:17px; color:#fff;">R</div>
+      <div style="font-weight:800; font-size:19px; letter-spacing:-0.2px;">Reps</div>
+    </div>
+
+    <div style="font-size:22px; font-weight:800; margin-bottom:4px; letter-spacing:-0.4px;">С возвращением</div>
+    <div style="font-size:13.5px; color:var(--muted); margin-bottom:22px;">Войдите, чтобы продолжить тренировки</div>
+
+    <div style="display:flex; background:var(--soft2); border-radius:10px; padding:3px; margin-bottom:22px;">
+      <div onClick="{{ setRoleAthlete }}" style="{{ roleAthleteStyle }}">Я спортсмен</div>
+      <div onClick="{{ setRoleCoach }}" style="{{ roleCoachStyle }}">Я тренер</div>
+    </div>
+
+    <div style="font-size:11.5px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:6px;">Email</div>
+    <input value="{{ email }}" onChange="{{ setEmail }}" placeholder="you@example.com" style="width:100%; border:1.5px solid var(--input-border); border-radius:10px; padding:12px 14px; font-size:13.5px; outline:none; margin-bottom:16px; background:var(--card); color:var(--text);" />
+
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+      <div style="font-size:11.5px; font-weight:700; text-transform:uppercase; color:var(--muted);">Пароль</div>
+      <div style="font-size:12px; font-weight:600; color:#1f6feb; cursor:pointer;">Забыли пароль?</div>
+    </div>
+    <input type="password" value="{{ password }}" onChange="{{ setPassword }}" placeholder="••••••••" style="width:100%; border:1.5px solid var(--input-border); border-radius:10px; padding:12px 14px; font-size:13.5px; outline:none; margin-bottom:22px; background:var(--card); color:var(--text);" />
+
+    <sc-if value="{{ error }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#fdeaec; color:#c23b4a; font-size:12.5px; font-weight:600; padding:10px 12px; border-radius:10px; margin-bottom:16px;">{{ error }}</div>
+    </sc-if>
+
+    <div onClick="{{ submit }}" style="{{ submitButtonStyle }}">
+      <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">Входим…</sc-if>
+      <sc-if value="{{ notLoading }}" hint-placeholder-val="{{ true }}">Войти</sc-if>
+    </div>
+
+    <div style="text-align:center; margin-top:20px; font-size:13px; color:var(--muted);">{{ footerHint }}</div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { role: 'athlete', email: '', password: '', loading: false, error: '', theme: (typeof localStorage !== 'undefined' && localStorage.getItem('reps_theme')) || 'light' };
+
+  toggleTheme = () => {
+    const next = this.state.theme === 'dark' ? 'light' : 'dark';
+    if (typeof localStorage !== 'undefined') localStorage.setItem('reps_theme', next);
+    this.setState({ theme: next });
+  };
+
+  setRoleAthlete = () => this.setState({ role: 'athlete', error:'' });
+  setRoleCoach = () => this.setState({ role: 'coach', error:'' });
+  setEmail = (e) => this.setState({ email: e.target.value, error:'' });
+  setPassword = (e) => this.setState({ password: e.target.value, error:'' });
+
+  submit = () => {
+    if (this.state.loading) return;
+    if (!this.state.email.trim() || !this.state.password.trim()) {
+      this.setState({ error: 'Введите email и пароль' });
+      return;
+    }
+    this.setState({ loading: true, error: '' });
+    setTimeout(() => {
+      window.location.href = this.state.role === 'coach' ? './Trainer Cabinet.dc.html' : './Athlete Cabinet.dc.html';
+    }, 700);
+  };
+
+  renderVals() {
+    const s = this.state;
+    const dark = s.theme === 'dark';
+    const T = dark ? {
+      bg:'#0e1112', card:'#1e2427', text:'#eef1ef', muted:'#8fa19c', inputBorder:'#333c40', soft2:'#272f32', segSelectedBg:'#eef1ef', segSelectedText:'#12181a',
+    } : {
+      bg:'#12181a', card:'#ffffff', text:'#12181a', muted:'#8a9a96', inputBorder:'#e0e5dd', soft2:'#f0f2ee', segSelectedBg:'#12181a', segSelectedText:'#ffffff',
+    };
+    const segActive = `background:${T.segSelectedBg}; color:${T.segSelectedText};`;
+    const segInactive = `color:${T.muted};`;
+    return {
+      pageStyle: `width:100%; min-height:100vh; background:${T.bg}; color:${T.text}; display:flex; align-items:center; justify-content:center; padding:24px; --bg:${T.bg}; --card:${T.card}; --text:${T.text}; --muted:${T.muted}; --input-border:${T.inputBorder}; --soft2:${T.soft2};`,
+      themeIcon: dark ? '☀️' : '🌙',
+      toggleTheme: this.toggleTheme,
+      roleAthleteStyle: `flex:1; text-align:center; padding:8px 0; border-radius:8px; font-size:12.5px; font-weight:700; cursor:pointer; ${s.role==='athlete' ? segActive : segInactive}`,
+      roleCoachStyle: `flex:1; text-align:center; padding:8px 0; border-radius:8px; font-size:12.5px; font-weight:700; cursor:pointer; ${s.role==='coach' ? segActive : segInactive}`,
+      setRoleAthlete: this.setRoleAthlete,
+      setRoleCoach: this.setRoleCoach,
+      email: s.email, setEmail: this.setEmail,
+      password: s.password, setPassword: this.setPassword,
+      error: s.error,
+      loading: s.loading, notLoading: !s.loading,
+      submit: this.submit,
+      submitButtonStyle: `background:${s.loading ? '#5b6b68' : '#1f9d55'}; color:#fff; font-weight:700; font-size:14px; padding:13px; border-radius:10px; text-align:center; cursor:pointer;`,
+      footerHint: s.role === 'athlete' ? 'Нет аккаунта? Дождитесь приглашения от тренера по email.' : 'Нет аккаунта тренера? Напишите нам, чтобы подключиться.',
+    };
+  }
+}
+
+</script>
+</body>
+</html>

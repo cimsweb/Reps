@@ -1,0 +1,5 @@
+"""Business rules and limits for AI agent sessions."""
+
+MAX_AGENT_MESSAGES_PER_SESSION = 20
+AI_CALL_TIMEOUT_SECONDS = 30
+AGENT_SESSION_EXPIRY_HOURS = 24

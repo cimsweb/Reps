@@ -1,16 +1,25 @@
 import { useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 
 import { ApiError } from "../api/client.js";
 import { useAuth } from "../auth/AuthContext.jsx";
-import { FieldError } from "../components/FieldError.jsx";
+import { AuthErrorBanner, AuthRoleSelector } from "../components/auth/index.js";
+import { AuthLayout } from "../components/layout/AuthLayout.jsx";
+import { Button } from "../components/ui/Button.jsx";
+import { Input } from "../components/ui/Input.jsx";
+
+function resolveInitialRole(searchParams) {
+  const roleParam = searchParams.get("role");
+  return roleParam === "coach" ? "coach" : "athlete";
+}
 
 export function RegisterPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { register, isAuthenticated, user } = useAuth();
+  const [role, setRole] = useState(() => resolveInitialRole(searchParams));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("coach");
   const [fieldErrors, setFieldErrors] = useState({});
   const [formError, setFormError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -19,10 +28,21 @@ export function RegisterPage() {
     return <Navigate to={`/${user.role}`} replace />;
   }
 
+  const subtitle =
+    role === "coach"
+      ? "Создайте аккаунт тренера и приглашайте спортсменов"
+      : "Создайте аккаунт спортсмена и принимайте приглашения";
+
   async function handleSubmit(event) {
     event.preventDefault();
     setFieldErrors({});
     setFormError("");
+
+    if (!email.trim() || !password.trim()) {
+      setFormError("Введите email и пароль");
+      return;
+    }
+
     setSubmitting(true);
 
     try {
@@ -46,46 +66,48 @@ export function RegisterPage() {
   }
 
   return (
-    <main className="page">
-      <section className="card">
-        <h1>Регистрация</h1>
-        <form className="form" onSubmit={handleSubmit}>
-          <label>
-            Email
-            <input
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              required
-            />
-            <FieldError message={fieldErrors.email} />
-          </label>
-          <label>
-            Пароль
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              required
-            />
-            <FieldError message={fieldErrors.password} />
-          </label>
-          <label>
-            Роль
-            <select value={role} onChange={(event) => setRole(event.target.value)}>
-              <option value="coach">Тренер</option>
-              <option value="athlete">Спортсмен</option>
-            </select>
-          </label>
-          {formError ? <p className="form-error">{formError}</p> : null}
-          <button type="submit" disabled={submitting}>
-            {submitting ? "Создаём аккаунт..." : "Зарегистрироваться"}
-          </button>
-        </form>
-        <p>
-          Уже есть аккаунт? <Link to="/login">Войти</Link>
-        </p>
-      </section>
-    </main>
+    <AuthLayout>
+      <div className="auth-heading">
+        <h1 className="auth-heading__title">Регистрация</h1>
+        <p className="auth-heading__subtitle">{subtitle}</p>
+      </div>
+
+      <AuthRoleSelector value={role} onChange={setRole} />
+
+      <form className="auth-form" onSubmit={handleSubmit} noValidate>
+        <Input
+          label="Email"
+          type="email"
+          name="email"
+          autoComplete="email"
+          placeholder="you@example.com"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          error={fieldErrors.email}
+          required
+        />
+
+        <Input
+          label="Пароль"
+          type="password"
+          name="password"
+          autoComplete="new-password"
+          placeholder="••••••••"
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+          required
+        />
+
+        <AuthErrorBanner message={formError} />
+
+        <Button type="submit" variant="primary" block loading={submitting}>
+          {submitting ? "Создаём аккаунт…" : "Зарегистрироваться"}
+        </Button>
+      </form>
+
+      <p className="auth-footer">
+        Уже есть аккаунт? <Link to="/login">Войти</Link>
+      </p>
+    </AuthLayout>
   );
 }

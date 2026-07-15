@@ -11,7 +11,6 @@ from domain.entities.workout_feedback import WorkoutFeedback
 from domain.value_objects.age import Age
 from domain.value_objects.coach_athlete_link_id import CoachAthleteLinkId
 from domain.value_objects.email import Email
-from domain.value_objects.garmin_report_url import GarminReportUrl
 from domain.value_objects.height_cm import HeightCm
 from domain.value_objects.invitation_id import InvitationId
 from domain.value_objects.personal_record_id import PersonalRecordId
@@ -74,12 +73,10 @@ def _to_domain_personal_record(record: PersonalRecordRecord) -> PersonalRecord:
 
 
 def _to_domain_feedback(record: WorkoutFeedbackRecord) -> WorkoutFeedback:
-    garmin_url = GarminReportUrl(record.garmin_url) if record.garmin_url else None
     return WorkoutFeedback(
         id=WorkoutFeedbackId(record.id),
         athlete_id=UserId(record.athlete_id),
         text=record.text,
-        garmin_url=garmin_url,
         created_at=record.created_at,
     )
 
@@ -371,20 +368,17 @@ class SqlAlchemyWorkoutFeedbackRepository:
 
     def save(self, feedback: WorkoutFeedback) -> WorkoutFeedback:
         record = self._db_session.get(WorkoutFeedbackRecord, feedback.id.value)
-        garmin_url = str(feedback.garmin_url) if feedback.garmin_url else None
         if record is None:
             record = WorkoutFeedbackRecord(
                 id=feedback.id.value,
                 athlete_id=feedback.athlete_id.value,
                 text=feedback.text,
-                garmin_url=garmin_url,
                 created_at=feedback.created_at,
             )
             self._db_session.add(record)
         else:
             record.athlete_id = feedback.athlete_id.value
             record.text = feedback.text
-            record.garmin_url = garmin_url
             record.created_at = feedback.created_at
 
         self._db_session.flush()

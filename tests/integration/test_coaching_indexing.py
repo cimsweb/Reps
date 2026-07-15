@@ -17,7 +17,9 @@ from application.use_cases.submit_workout_feedback import SubmitWorkoutFeedbackU
 from domain.entities.invitation_status import InvitationStatus
 from domain.entities.record_type import RecordType
 from domain.entities.role import Role
+from domain.entities.user import User
 from domain.exceptions import CoachAthleteAccessDeniedError
+from domain.value_objects.user_id import UserId
 from infrastructure.db.coaching_repositories import (
     SqlAlchemyCoachAthleteLinkRepository,
     SqlAlchemyInvitationRepository,
@@ -34,7 +36,7 @@ from integration.conftest import database_is_available
 def _register_coach_and_athlete(
     user_repository: SqlAlchemyUserRepository,
     hasher: ScryptPasswordHasher,
-) -> tuple[object, object, str, str]:
+) -> tuple[User, User, str, str]:
     coach_email = f"coach-{uuid4()}@example.com"
     athlete_email = f"athlete-{uuid4()}@example.com"
     coach = RegisterUserUseCase(user_repository, hasher).execute(
@@ -187,7 +189,7 @@ def test_athlete_can_have_multiple_coaches() -> None:
             Role.ATHLETE,
         )
 
-        coach_ids: list[object] = []
+        coach_ids: list[UserId] = []
         for _ in range(2):
             coach_email = f"coach-{uuid4()}@example.com"
             coach = RegisterUserUseCase(user_repository, hasher).execute(

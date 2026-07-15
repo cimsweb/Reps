@@ -1,10 +1,11 @@
 const API_BASE = "/api/v1";
 
 export class ApiError extends Error {
-  constructor(status, code, message) {
+  constructor(status, code, message, extra = {}) {
     super(message);
     this.status = status;
     this.code = code;
+    this.fallback = extra.fallback;
   }
 }
 
@@ -15,7 +16,9 @@ async function parseResponse(response) {
 
   const data = await response.json();
   if (!response.ok) {
-    throw new ApiError(response.status, data.error, data.message);
+    throw new ApiError(response.status, data.error, data.message, {
+      fallback: data.fallback,
+    });
   }
   return data;
 }
@@ -174,4 +177,218 @@ export function submitWorkoutFeedback(token, payload) {
 export function fetchLinkedAthleteFeedback(token, athleteId, pagination = {}) {
   const query = paginationQuery(pagination);
   return apiRequest(`/coach/athletes/${athleteId}/feedback?${query}`, { token });
+}
+
+function trainingPeriodQuery({ period = "week", anchorDate } = {}) {
+  const params = new URLSearchParams({ period });
+  if (anchorDate) {
+    params.set("anchor_date", anchorDate);
+  }
+  return params.toString();
+}
+
+export function fetchCoachAthleteTrainingPlan(token, athleteId, options = {}) {
+  const query = trainingPeriodQuery(options);
+  return apiRequest(`/coach/athletes/${athleteId}/training-plan?${query}`, { token });
+}
+
+export function fetchAthleteTrainingPlan(token, options = {}) {
+  const query = trainingPeriodQuery(options);
+  return apiRequest(`/athlete/training-plan?${query}`, { token });
+}
+
+export function fetchCoachAthleteWorkoutReports(token, athleteId, options = {}) {
+  const query = trainingPeriodQuery(options);
+  return apiRequest(`/coach/athletes/${athleteId}/workout-reports?${query}`, { token });
+}
+
+export function fetchAthleteWorkoutReports(token, options = {}) {
+  const query = trainingPeriodQuery(options);
+  return apiRequest(`/athlete/workout-reports?${query}`, { token });
+}
+
+export function submitWorkoutReport(token, workoutId, payload) {
+  return apiRequest(`/athlete/planned-workouts/${workoutId}/report`, {
+    method: "POST",
+    token,
+    body: payload,
+  });
+}
+
+export function parseTrainingPlanText(token, athleteId, payload) {
+  return apiRequest(`/coach/athletes/${athleteId}/training-plans/parse`, {
+    method: "POST",
+    token,
+    body: payload,
+  });
+}
+
+export function createTrainingPlanFromText(token, athleteId, payload) {
+  return apiRequest(`/coach/athletes/${athleteId}/training-plans/from-text`, {
+    method: "POST",
+    token,
+    body: payload,
+  });
+}
+
+export function updateTrainingPlanRawText(token, planId, payload) {
+  return apiRequest(`/coach/training-plans/${planId}/raw-text`, {
+    method: "PATCH",
+    token,
+    body: payload,
+  });
+}
+
+export function fetchCoachAthleteTrainingPlanText(token, athleteId, options = {}) {
+  const query = trainingPeriodQuery(options);
+  return apiRequest(`/coach/athletes/${athleteId}/training-plan/text?${query}`, { token });
+}
+
+export function fetchAthleteTrainingPlanText(token, options = {}) {
+  const query = trainingPeriodQuery(options);
+  return apiRequest(`/athlete/training-plan/text?${query}`, { token });
+}
+
+async function getActiveAgentSession(path, token) {
+  try {
+    return await apiRequest(path, { token });
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) {
+      return null;
+    }
+    throw error;
+  }
+}
+
+export function startPlanAgentSession(token, athleteId, payload) {
+  return apiRequest(`/coach/athletes/${athleteId}/training-plans/ai/sessions`, {
+    method: "POST",
+    token,
+    body: payload,
+  });
+}
+
+export function sendPlanAgentMessage(token, sessionId, payload) {
+  return apiRequest(`/coach/training-plans/ai/sessions/${sessionId}/messages`, {
+    method: "POST",
+    token,
+    body: payload,
+  });
+}
+
+export function getPlanAgentSession(token, sessionId) {
+  return apiRequest(`/coach/training-plans/ai/sessions/${sessionId}`, { token });
+}
+
+export function getActivePlanAgentSession(token, athleteId) {
+  return getActiveAgentSession(
+    `/coach/athletes/${athleteId}/training-plans/ai/sessions/active`,
+    token,
+  );
+}
+
+export function confirmPlanAgentDraft(token, sessionId, payload = {}) {
+  return apiRequest(`/coach/training-plans/ai/sessions/${sessionId}/confirm`, {
+    method: "POST",
+    token,
+    body: payload,
+  });
+}
+
+export function startReportAgentSession(token, workoutId) {
+  return apiRequest(`/athlete/planned-workouts/${workoutId}/report/ai/sessions`, {
+    method: "POST",
+    token,
+  });
+}
+
+export function sendReportAgentMessage(token, sessionId, payload) {
+  return apiRequest(`/athlete/report/ai/sessions/${sessionId}/messages`, {
+    method: "POST",
+    token,
+    body: payload,
+  });
+}
+
+export function getReportAgentSession(token, sessionId) {
+  return apiRequest(`/athlete/report/ai/sessions/${sessionId}`, { token });
+}
+
+export function getActiveReportAgentSession(token, workoutId) {
+  return getActiveAgentSession(
+    `/athlete/planned-workouts/${workoutId}/report/ai/sessions/active`,
+    token,
+  );
+}
+
+export function confirmReportAgentDraft(token, sessionId, payload = {}) {
+  return apiRequest(`/athlete/report/ai/sessions/${sessionId}/confirm`, {
+    method: "POST",
+    token,
+    body: payload,
+  });
+}
+
+export function fetchAthleteConversations(token) {
+  return apiRequest("/athlete/conversations", { token });
+}
+
+export function fetchAthleteConversationMessages(token, conversationId, options = {}) {
+  const params = new URLSearchParams();
+  if (options.offset != null) {
+    params.set("offset", String(options.offset));
+  }
+  if (options.limit != null) {
+    params.set("limit", String(options.limit));
+  }
+  const query = params.toString();
+  const suffix = query ? `?${query}` : "";
+  return apiRequest(`/athlete/conversations/${conversationId}/messages${suffix}`, { token });
+}
+
+export function sendAthleteCoachMessage(token, coachId, payload) {
+  return apiRequest(`/athlete/coaches/${coachId}/messages`, {
+    method: "POST",
+    token,
+    body: payload,
+  });
+}
+
+export function markAthleteConversationRead(token, conversationId) {
+  return apiRequest(`/athlete/conversations/${conversationId}/read`, {
+    method: "POST",
+    token,
+  });
+}
+
+export function fetchCoachConversations(token) {
+  return apiRequest("/coach/conversations", { token });
+}
+
+export function fetchCoachConversationMessages(token, conversationId, options = {}) {
+  const params = new URLSearchParams();
+  if (options.offset != null) {
+    params.set("offset", String(options.offset));
+  }
+  if (options.limit != null) {
+    params.set("limit", String(options.limit));
+  }
+  const query = params.toString();
+  const suffix = query ? `?${query}` : "";
+  return apiRequest(`/coach/conversations/${conversationId}/messages${suffix}`, { token });
+}
+
+export function sendCoachAthleteMessage(token, athleteId, payload) {
+  return apiRequest(`/coach/athletes/${athleteId}/messages`, {
+    method: "POST",
+    token,
+    body: payload,
+  });
+}
+
+export function markCoachConversationRead(token, conversationId) {
+  return apiRequest(`/coach/conversations/${conversationId}/read`, {
+    method: "POST",
+    token,
+  });
 }

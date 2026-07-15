@@ -1,0 +1,115 @@
+/**
+ * Reps design tokens — source: frontend/template/*.dc.html
+ */
+
+:root {
+    /* Colors — ink & accents */
+    --color-ink: #12181a;
+    --color-accent-green: #1f9d55;
+    --color-accent-blue: #1f6feb;
+    --color-accent-orange: #ff8c1a;
+    --color-white: #ffffff;
+
+    /* Backgrounds */
+    --color-bg-page: #f3f5f1;
+    --color-bg-page-alt: #f6f7f5;
+    --color-bg-muted: #e4e8e1;
+    --color-bg-segmented: #f0f2ee;
+    --color-bg-auth: #12181a;
+    --color-bg-sidebar: #12181a;
+
+    /* Text */
+    --color-text-primary: #12181a;
+    --color-text-body: #42504d;
+    --color-text-muted: #8a9a96;
+    --color-text-sidebar: #c7d2cf;
+    --color-text-sidebar-active: #ffffff;
+
+    /* Borders */
+    --color-border: #e7ece5;
+    --color-border-input: #e0e5dd;
+    --color-border-strong: #12181a;
+    --color-divider: #eef0ec;
+
+    /* Semantic */
+    --color-error: #c23b4a;
+    --color-error-bg: #fdeaec;
+    --color-success: #1f9d55;
+    --color-success-bg: #f0f9f3;
+    --color-success-border: #cdeeda;
+    --color-warning-bg: #fff4e5;
+
+    /* Legacy bridge (existing App.css classes) */
+    --color-legacy-page-bg: #f4f7fb;
+    --color-legacy-ink: #142033;
+    --color-legacy-muted: #5b6b7f;
+    --color-legacy-border: #e4ebf3;
+    --color-legacy-input-border: #c5d0de;
+
+    /* Typography */
+    --font-family: "Manrope", system-ui, sans-serif;
+    --font-size-xs: 11px;
+    --font-size-sm: 12px;
+    --font-size-md: 13px;
+    --font-size-base: 13.5px;
+    --font-size-lg: 15px;
+    --font-size-xl: 18px;
+    --font-size-2xl: 22px;
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --font-weight-extrabold: 800;
+    --line-height-base: 1.5;
+    --letter-spacing-label: 0.3px;
+
+    /* Spacing */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-7: 28px;
+    --space-8: 32px;
+
+    /* Radius */
+    --radius-sm: 10px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-2xl: 24px;
+    --radius-pill: 999px;
+
+    /* Shadows */
+    --shadow-card: 0 12px 30px rgba(18, 24, 26, 0.08);
+    --shadow-modal: 0 24px 48px rgba(15, 20, 18, 0.2);
+
+    /* Layout */
+    --layout-sidebar-width: 232px;
+    --layout-athlete-width: 393px;
+    --overlay-backdrop: rgba(15, 20, 18, 0.45);
+
+    /* Z-index */
+    --z-sidebar: 40;
+    --z-modal: 50;
+}
+
+[data-theme="dark"] {
+    --color-bg-page: #15191a;
+    --color-bg-page-alt: #15191a;
+    --color-bg-muted: #272f32;
+    --color-bg-segmented: #272f32;
+    --color-bg-auth: #0e1112;
+    --color-white: #1e2427;
+    --color-text-primary: #eef1ef;
+    --color-text-body: #c7d0cd;
+    --color-text-muted: #8fa19c;
+    --color-border: #2b3236;
+    --color-border-input: #333c40;
+    --color-divider: #262d30;
+    --color-success-bg: #12281b;
+    --color-success-border: #204a30;
+    --color-error-bg: #3a1c20;
+    --shadow-card: 0 12px 30px rgba(0, 0, 0, 0.28);
+}

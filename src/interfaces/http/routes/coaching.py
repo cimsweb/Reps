@@ -166,7 +166,6 @@ def _feedback_to_response(view: WorkoutFeedbackView) -> WorkoutFeedbackResponse:
         id=view.id,
         athlete_id=view.athlete_id,
         text=view.text,
-        garmin_url=view.garmin_url,
         created_at=view.created_at,
     )
 
@@ -176,7 +175,6 @@ def _feedback_entity_to_response(feedback: WorkoutFeedback) -> WorkoutFeedbackRe
         id=str(feedback.id.value),
         athlete_id=str(feedback.athlete_id.value),
         text=feedback.text,
-        garmin_url=str(feedback.garmin_url) if feedback.garmin_url else None,
         created_at=feedback.created_at,
     )
 
@@ -528,7 +526,6 @@ def submit_workout_feedback(
         authenticated_user.user.id,
         authenticated_user.user.role,
         body.text,
-        body.garmin_url,
     )
     return _feedback_entity_to_response(feedback)
 

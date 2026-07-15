@@ -1,0 +1,618 @@
+.week-strip {
+    display: flex;
+    gap: var(--space-2);
+    overflow-x: auto;
+    padding-bottom: 6px;
+    margin-bottom: var(--space-4);
+}
+
+.week-strip__day {
+    flex-shrink: 0;
+    width: 42px;
+    padding: var(--space-2) 0;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: var(--color-white);
+    color: var(--color-ink);
+    text-align: center;
+    cursor: pointer;
+}
+
+.week-strip__day--active {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+    color: var(--color-white);
+}
+
+.week-strip__label {
+    display: block;
+    font-size: 10px;
+    font-weight: var(--font-weight-bold);
+    opacity: 0.85;
+}
+
+.week-strip__date {
+    display: block;
+    font-size: 11px;
+    font-weight: var(--font-weight-bold);
+    line-height: 1.2;
+}
+
+.week-strip__day--active .week-strip__label {
+    opacity: 1;
+}
+
+.week-strip__dot {
+    display: block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin: var(--space-1) auto 0;
+}
+
+.athlete-tab-screen {
+    display: grid;
+    gap: var(--space-4);
+}
+
+.athlete-tab-screen__title {
+    margin: 0;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-extrabold);
+}
+
+.athlete-screen-title {
+    margin: 0 0 var(--space-4);
+    font-size: 21px;
+    font-weight: var(--font-weight-extrabold);
+    letter-spacing: -0.4px;
+}
+
+@media (min-width: 1024px) {
+    .athlete-screen-title {
+        font-size: 28px;
+        letter-spacing: -0.5px;
+        margin-bottom: var(--space-5);
+    }
+}
+
+.athlete-tab-placeholder {
+    padding: var(--space-4);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-lg);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-md);
+    text-align: center;
+}
+
+.athlete-header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.athlete-logout-btn {
+    border: none;
+    background: var(--color-bg-muted);
+    color: var(--color-text-body);
+    font-size: 10.5px;
+    font-weight: var(--font-weight-bold);
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    line-height: 1.3;
+    text-align: center;
+}
+
+.athlete-today-date {
+    margin: 0 0 var(--space-2);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-label);
+    color: var(--color-text-muted);
+}
+
+.athlete-shell-section .section {
+    margin-bottom: var(--space-6);
+}
+
+.athlete-shell-section .section:last-child {
+    margin-bottom: 0;
+}
+
+.today-workout-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-4);
+    margin-bottom: var(--space-4);
+}
+
+.today-workout-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+}
+
+.athlete-today-screen__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+}
+
+.athlete-today-screen__greeting {
+    margin: 4px 0 0;
+    font-size: 21px;
+    font-weight: var(--font-weight-extrabold);
+    letter-spacing: -0.4px;
+}
+
+@media (min-width: 1024px) {
+    .athlete-today-screen__greeting {
+        font-size: 28px;
+        letter-spacing: -0.5px;
+        margin-bottom: var(--space-5);
+    }
+
+    .athlete-today-screen__full-layout {
+        display: grid;
+        grid-template-columns: 1.1fr 1fr;
+        gap: var(--space-5);
+        align-items: start;
+    }
+}
+
+.athlete-today-style-toggle {
+    border: none;
+    background: var(--color-bg-muted);
+    color: var(--color-text-body);
+    font-size: 10.5px;
+    font-weight: var(--font-weight-bold);
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    line-height: 1.3;
+}
+
+.athlete-today-subtabs {
+    display: flex;
+    background: var(--color-bg-muted);
+    border-radius: 10px;
+    padding: 3px;
+    margin-bottom: var(--space-3);
+}
+
+.athlete-today-subtabs__item {
+    flex: 1;
+    border: none;
+    background: transparent;
+    text-align: center;
+    padding: 8px 0;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-body);
+    cursor: pointer;
+}
+
+.athlete-today-subtabs__item--active {
+    background: var(--color-white);
+    color: var(--color-ink);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .athlete-today-subtabs__item--active {
+    color: var(--color-text-primary);
+}
+
+.today-workout-card__title {
+    margin: 0;
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-extrabold);
+}
+
+.today-workout-card__blocks {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+}
+
+.today-workout-card__block {
+    background: var(--color-bg-page);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+}
+
+.today-workout-card__block-label {
+    margin: 0;
+    font-size: 10.5px;
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+}
+
+.today-workout-card__block-text {
+    margin: 3px 0 0;
+    font-size: 13.5px;
+    line-height: 1.45;
+}
+
+.today-workout-card__metrics {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.today-workout-card__metric {
+    flex: 1;
+    border-radius: 10px;
+    padding: 9px 10px;
+    text-align: center;
+}
+
+.today-workout-card__metric--pace {
+    background: #eef7f0;
+}
+
+.today-workout-card__metric--hr {
+    background: #eef2fb;
+}
+
+.today-workout-card__metric-label {
+    display: block;
+    font-size: 9.5px;
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+}
+
+.today-workout-card__metric--pace .today-workout-card__metric-label {
+    color: var(--color-accent-green);
+}
+
+.today-workout-card__metric--hr .today-workout-card__metric-label {
+    color: var(--color-accent-blue);
+}
+
+.today-workout-card__metric-value {
+    display: block;
+    margin-top: 2px;
+    font-size: 13px;
+    font-weight: var(--font-weight-bold);
+}
+
+.today-workout-card__empty {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+}
+
+.submitted-workout-report {
+    background: var(--color-success-bg);
+    border: 1px solid #cdeeda;
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    margin-bottom: var(--space-4);
+    color: #1a4d2e;
+    font-size: var(--font-size-sm);
+    line-height: 1.55;
+}
+
+.submitted-workout-report__label {
+    margin: 0 0 var(--space-2);
+    font-size: 11px;
+    font-weight: var(--font-weight-extrabold);
+    text-transform: uppercase;
+    color: var(--color-accent-green);
+}
+
+.submitted-workout-report__text {
+    margin: 0;
+}
+
+.submitted-workout-report__meta {
+    margin: var(--space-2) 0 0;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-body);
+}
+
+.today-report-panel {
+    display: grid;
+    gap: var(--space-3);
+}
+
+.today-report-panel__ai-link {
+    text-align: right;
+}
+
+.athlete-invitations {
+    display: grid;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.athlete-invitation-card__title {
+    margin: 0 0 var(--space-1);
+    font-weight: var(--font-weight-bold);
+}
+
+.athlete-invitation-card__meta {
+    margin: 0 0 var(--space-3);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+}
+
+.athlete-invitation-card__actions {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.athlete-coaches-meta {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+}
+
+.athlete-week-screen__compliance {
+    margin: 0 0 var(--space-4);
+    font-size: 12.5px;
+    color: var(--color-text-muted);
+}
+
+.athlete-week-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.athlete-week-list__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    width: 100%;
+    text-align: left;
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    padding: 14px var(--space-4);
+    cursor: pointer;
+}
+
+.athlete-week-list__date {
+    margin: 0;
+    font-size: 11px;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+}
+
+.athlete-week-list__type {
+    margin: 2px 0 0;
+    font-size: 14px;
+    font-weight: var(--font-weight-bold);
+}
+
+.athlete-section-label {
+    margin: 0 0 var(--space-2);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+}
+
+.athlete-records-section {
+    margin-bottom: var(--space-5);
+}
+
+.athlete-records-section__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+}
+
+.athlete-records-section__add-btn {
+    border: none;
+    background: var(--color-bg-segmented);
+    color: var(--color-text-body);
+    font-size: 12px;
+    font-weight: var(--font-weight-bold);
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+}
+
+.athlete-records-form {
+    display: grid;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+    padding: var(--space-4);
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+}
+
+.athlete-records-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+@media (min-width: 1024px) {
+    .athlete-records-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        max-width: 900px;
+    }
+
+    .athlete-week-list {
+        max-width: 640px;
+    }
+}
+
+.athlete-record-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    padding: 14px;
+}
+
+.athlete-record-card__icon {
+    display: block;
+    font-size: 20px;
+    margin-bottom: 6px;
+}
+
+.athlete-record-card__value {
+    margin: 0;
+    font-size: 17px;
+    font-weight: var(--font-weight-extrabold);
+}
+
+.athlete-record-card__name {
+    margin: 2px 0 0;
+    font-size: 11.5px;
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-semibold);
+}
+
+.athlete-record-card__type {
+    margin: 2px 0 0;
+    font-size: 10px;
+    color: var(--color-text-muted);
+}
+
+.athlete-record-card__date {
+    margin: 6px 0 0;
+    font-size: 10.5px;
+    color: var(--color-accent-green);
+    font-weight: var(--font-weight-bold);
+}
+
+.athlete-record-card__actions {
+    display: flex;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+}
+
+.athlete-chat-screen {
+    display: flex;
+    flex-direction: column;
+    min-height: 420px;
+}
+
+@media (min-width: 1024px) {
+    .athlete-chat-screen {
+        max-width: 680px;
+        min-height: calc(100vh - 64px);
+        background: var(--color-white);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        padding: 0;
+    }
+
+    .athlete-chat-header {
+        padding: var(--space-4) 22px;
+        border-bottom: 1px solid var(--color-divider);
+        margin-bottom: 0;
+    }
+
+    .athlete-chat-screen .chat-message-list {
+        flex: 1;
+        padding: var(--space-5) 22px;
+        overflow-y: auto;
+    }
+
+    .athlete-chat-screen .chat-composer {
+        padding: 14px 22px;
+        border-top: 1px solid var(--color-divider);
+    }
+}
+
+.athlete-chat-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+}
+
+.athlete-chat-header__name {
+    margin: 0;
+    font-size: 15px;
+    font-weight: var(--font-weight-extrabold);
+}
+
+.athlete-chat-messages {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+    overflow-y: auto;
+}
+
+.athlete-chat-bubble-wrap {
+    display: flex;
+}
+
+.athlete-chat-bubble-wrap--mine {
+    justify-content: flex-end;
+}
+
+.athlete-chat-bubble-wrap--coach {
+    justify-content: flex-start;
+}
+
+.athlete-chat-bubble {
+    max-width: 85%;
+    border-radius: 14px;
+    padding: 10px 12px;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.athlete-chat-bubble p {
+    margin: 0;
+}
+
+.athlete-chat-bubble--mine {
+    background: var(--color-ink);
+    color: var(--color-white);
+}
+
+.athlete-chat-bubble--coach {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    color: var(--color-ink);
+}
+
+.athlete-chat-bubble__question {
+    margin: 0 0 4px;
+    font-size: 9.5px;
+    font-weight: var(--font-weight-extrabold);
+    text-transform: uppercase;
+    color: var(--color-accent-orange);
+}
+
+.athlete-chat-compose {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+}
+
+.athlete-chat-compose .ui-input {
+    flex: 1;
+}
+
+.athlete-progress-screen .section h2,
+.athlete-progress-screen .section h3 {
+    font-size: var(--font-size-md);
+}

@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    @keyframes tp-dot { 0%,80%,100%{ transform: scale(0.6); opacity:.4 } 40%{ transform: scale(1); opacity:1 } }
+    @keyframes tp-spin { to { transform: rotate(360deg) } }
+    @keyframes tp-pulse { 0%,100%{ box-shadow: 0 0 0 0 rgba(255,140,26,0.35) } 50%{ box-shadow: 0 0 0 6px rgba(255,140,26,0) } }
+    * { box-sizing: border-box; font-family: 'Manrope', sans-serif; }
+    body { margin:0; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-thumb { background: #d8ddd6; border-radius: 8px; }
+  </style>
+</helmet>
+
+<div style="{{ rootStyle }}">
+
+  <!-- SIDEBAR -->
+  <div style="width:232px; flex-shrink:0; background:#12181a; color:#fff; display:flex; flex-direction:column; padding:24px 16px; gap:28px;">
+    <div style="display:flex; align-items:center; gap:10px; padding:0 8px;">
+      <div style="width:34px; height:34px; border-radius:10px; background:#1f9d55; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:16px;">R</div>
+      <div style="font-weight:800; font-size:17px; letter-spacing:-0.2px; flex:1;">Reps</div>
+      <div onClick="{{ toggleTheme }}" style="cursor:pointer; font-size:16px; opacity:0.8;">{{ themeIcon }}</div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:4px;">
+      <div onClick="{{ goList }}" style="{{ navListStyle }}">
+        <span style="font-size:18px;">🏃</span>
+        <span>Спортсмены</span>
+      </div>
+      <div onClick="{{ goChat }}" style="{{ navChatStyle }}">
+        <span style="font-size:18px;">💬</span>
+        <span>Чат</span>
+        <sc-if value="{{ unreadChatCount }}" hint-placeholder-val="{{ 0 }}">
+          <span style="margin-left:auto; background:#ff8c1a; color:#12181a; font-weight:800; font-size:11px; padding:2px 7px; border-radius:20px;">{{ unreadChatCount }}</span>
+        </sc-if>
+      </div>
+      <div onClick="{{ goSettings }}" style="{{ navSettingsStyle }}">
+        <span style="font-size:18px;">⚙️</span>
+        <span>Настройки ИИ</span>
+      </div>
+    </div>
+    <div style="margin-top:auto; display:flex; align-items:center; gap:10px; padding:12px 8px; border-top:1px solid rgba(255,255,255,0.1);">
+      <div style="width:34px; height:34px; border-radius:50%; background:#2b3538; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px;">ИК</div>
+      <div>
+        <div style="font-size:13px; font-weight:700;">Игорь Крылов</div>
+        <div style="font-size:11px; color:var(--muted);">Тренер</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div style="flex:1; min-width:0; padding:32px 40px; overflow-y:auto; height:100vh;">
+
+    <sc-if value="{{ isListView }}" hint-placeholder-val="{{ true }}">
+      <div>
+        <div style="display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:16px;">
+          <div>
+            <div style="font-size:13px; color:#6b7876; font-weight:600; text-transform:uppercase; letter-spacing:0.4px;">{{ todayLabel }}</div>
+            <div style="font-size:28px; font-weight:800; letter-spacing:-0.5px;">Спортсмены</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="display:flex; background:var(--soft2); border-radius:10px; padding:3px;">
+              <div onClick="{{ setDashCards }}" style="{{ segCardsStyle }}">Плитка</div>
+              <div onClick="{{ setDashCompact }}" style="{{ segCompactStyle }}">Список</div>
+            </div>
+            <div onClick="{{ openInvite }}" style="background:#1f9d55; color:#fff; font-weight:700; font-size:13px; padding:10px 16px; border-radius:10px; cursor:pointer; white-space:nowrap;">+ Пригласить спортсмена</div>
+          </div>
+        </div>
+
+        <sc-if value="{{ isCardsStyle }}" hint-placeholder-val="{{ true }}">
+          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:16px;">
+            <sc-for list="{{ athletes }}" as="a" hint-placeholder-count="4">
+              <div onClick="{{ a.openFn }}" style="{{ a.cardOuterStyle }}" style-hover="{{ a.cardOuterHoverStyle }}">
+                <sc-if value="{{ a.unreadQuestion }}" hint-placeholder-val="{{ false }}">
+                  <div style="position:absolute; top:14px; right:14px; width:10px; height:10px; border-radius:50%; background:#ff8c1a; animation: tp-pulse 1.8s infinite;"></div>
+                </sc-if>
+                <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+                  <div style="{{ a.avatarStyle }}">{{ a.initials }}</div>
+                  <div>
+                    <div style="font-weight:700; font-size:15px;">{{ a.name }}</div>
+                    <div style="font-size:12px; color:var(--muted);">{{ a.level }}</div>
+                  </div>
+                </div>
+                <sc-if value="{{ a.invitePending }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex; align-items:center; justify-content:space-between; background:var(--soft); border-radius:10px; padding:10px 12px;">
+                    <div style="font-size:12px; font-weight:600; color:var(--muted);">✉️ {{ a.email }}</div>
+                    <div onClick="{{ a.resendFn }}" style="font-size:11.5px; font-weight:700; color:#1f6feb; cursor:pointer;">Напомнить</div>
+                  </div>
+                  <div style="margin-top:8px; font-size:11.5px; font-weight:700; color:var(--pending-badge-text); background:var(--pending-badge-bg); padding:4px 10px; border-radius:20px; display:inline-block;">Приглашение отправлено</div>
+                </sc-if>
+                <sc-if value="{{ a.isActive }}" hint-placeholder-val="{{ true }}">
+                  <div style="display:flex; align-items:center; justify-content:space-between; background:var(--soft); border-radius:10px; padding:10px 12px;">
+                    <div style="font-size:13px; font-weight:600;">{{ a.todayType }}</div>
+                    <div style="{{ a.statusChipStyle }}">{{ a.statusLabel }}</div>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isCompactStyle }}" hint-placeholder-val="{{ false }}">
+          <div style="background:var(--card); border-radius:16px; border:1px solid var(--border); overflow:hidden;">
+            <div style="display:grid; grid-template-columns:1.6fr 1.4fr 1fr 32px; padding:12px 20px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; color:var(--muted); border-bottom:1px solid var(--border);">
+              <div>Спортсмен</div><div>Сегодня</div><div>Статус</div><div></div>
+            </div>
+            <sc-for list="{{ athletes }}" as="a" hint-placeholder-count="4">
+              <div onClick="{{ a.openFn }}" style="{{ a.rowOuterStyle }}" style-hover="{{ a.rowOuterHoverStyle }}">
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <div style="{{ a.avatarStyleSm }}">{{ a.initials }}</div>
+                  <div style="font-weight:600; font-size:14px;">{{ a.name }}</div>
+                </div>
+                <sc-if value="{{ a.invitePending }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:12.5px; color:var(--muted);">✉️ {{ a.email }}</div>
+                  <div><span style="font-size:11.5px; font-weight:700; color:var(--pending-badge-text); background:var(--pending-badge-bg); padding:4px 10px; border-radius:20px;">Приглашение отправлено</span></div>
+                  <div onClick="{{ a.resendFn }}" style="font-size:11.5px; font-weight:700; color:#1f6feb; cursor:pointer; text-align:right;">Напомнить</div>
+                </sc-if>
+                <sc-if value="{{ a.isActive }}" hint-placeholder-val="{{ true }}">
+                  <div style="font-size:13px; color:var(--muted-strong);">{{ a.todayType }}</div>
+                  <div><span style="{{ a.statusChipStyle }}">{{ a.statusLabel }}</span></div>
+                  <div>
+                    <sc-if value="{{ a.unreadQuestion }}" hint-placeholder-val="{{ false }}">
+                      <div style="width:9px; height:9px; border-radius:50%; background:#ff8c1a;"></div>
+                    </sc-if>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isAthleteView }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <div onClick="{{ goList }}" style="display:inline-flex; align-items:center; gap:6px; color:var(--muted-strong); font-size:13px; font-weight:600; cursor:pointer; margin-bottom:18px;">← Все спортсмены</div>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:14px;">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <div style="{{ selected.avatarStyleLg }}">{{ selected.initials }}</div>
+            <div>
+              <div style="font-size:22px; font-weight:800;">{{ selected.name }}</div>
+              <div style="font-size:13px; color:var(--muted);">{{ selected.level }} · Соблюдение плана {{ selected.compliance }}%</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <div onClick="{{ openAddDay }}" style="background:var(--card); border:1.5px solid var(--muted-strong); color:var(--text); font-weight:700; font-size:13px; padding:10px 16px; border-radius:10px; cursor:pointer;">+ Тренировка</div>
+            <div onClick="{{ openAddWeek }}" style="background:#1f9d55; color:#fff; font-weight:700; font-size:13px; padding:10px 16px; border-radius:10px; cursor:pointer;">+ Неделя целиком</div>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div onClick="{{ prevWeek }}" style="width:32px;height:32px;border-radius:8px;background:var(--soft2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;font-weight:700;">‹</div>
+            <div style="font-size:13px; font-weight:700; color:var(--muted-strong); min-width:150px; text-align:center;">{{ weekRangeLabel }}</div>
+            <div onClick="{{ nextWeek }}" style="width:32px;height:32px;border-radius:8px;background:var(--soft2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;font-weight:700;">›</div>
+          </div>
+          <input type="date" value="{{ datePick }}" onChange="{{ setDatePick }}" style="border:1.5px solid var(--input-border); border-radius:8px; padding:7px 10px; font-size:12.5px; background:var(--card); color:var(--text); outline:none;" />
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(7, 1fr); gap:10px; margin-bottom:24px;">
+          <sc-for list="{{ selected.week }}" as="d" hint-placeholder-count="7">
+            <div onClick="{{ d.selectFn }}" style="{{ d.cardStyle }}">
+              <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); letter-spacing:0.3px;">{{ d.dayLabel }}</div>
+              <div style="font-size:13px; font-weight:700; margin:6px 0 10px;">{{ d.title }}</div>
+              <div style="{{ d.statusDotStyle }}"></div>
+              <div style="font-size:11px; font-weight:600; margin-top:6px;">{{ d.statusLabel }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:22px;">
+          <div style="font-size:15px; font-weight:800;">{{ activeDay.dayFull }}{{ activeDay.titleSuffix }}</div>
+          <div style="font-size:12.5px; color:var(--muted); font-weight:600; margin-top:2px; margin-bottom:16px;">{{ activeDay.date }}</div>
+
+          <sc-if value="{{ activeDay.hasPlan }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex; flex-direction:column; gap:2px; margin-bottom:8px;">
+              <sc-for list="{{ activeDay.lines }}" as="ln" hint-placeholder-count="6">
+                <sc-if value="{{ ln.blank }}" hint-placeholder-val="{{ false }}">
+                  <div style="height:10px;"></div>
+                </sc-if>
+                <sc-if value="{{ ln.bullet }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex; gap:8px; font-size:13.5px; line-height:1.6;">
+                    <span style="color:#1f9d55; font-weight:700;">•</span>
+                    <span>{{ ln.text }}</span>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ ln.plain }}" hint-placeholder-val="{{ true }}">
+                  <div style="font-size:13.5px; line-height:1.6;">{{ ln.text }}</div>
+                </sc-if>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ activeDay.hasNoPlan }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:13px; color:var(--muted); margin-bottom:8px;">План на этот день ещё не добавлен.</div>
+          </sc-if>
+
+          <div style="height:1px; background:var(--divider); margin:16px 0;"></div>
+
+          <div style="font-size:12px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:10px;">Отчёт спортсмена</div>
+          <sc-if value="{{ activeDay.hasReport }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--report-bg); border:1px solid var(--report-border); border-radius:12px; padding:14px 16px; font-size:13px; line-height:1.55; color:var(--report-text);">
+              {{ activeDay.reportText }}
+            </div>
+            <div style="display:flex; gap:18px; margin-top:10px; font-size:12px; color:var(--muted-strong);">
+              <div>RPE: <b>{{ activeDay.reportRpe }}</b>/10</div>
+              <div>🔗 <a href="#" style="color:#1f6feb;">Активность на часах</a></div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ activeDay.hasNoReport }}" hint-placeholder-val="{{ true }}">
+            <div style="font-size:13px; color:var(--muted);">{{ activeDay.noReportLabel }}</div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isChatView }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; gap:0; height:calc(100vh - 64px); background:var(--card); border:1px solid var(--border); border-radius:16px; overflow:hidden;">
+        <div style="width:280px; flex-shrink:0; border-right:1px solid var(--divider); overflow-y:auto;">
+          <div style="padding:16px 18px; font-weight:800; font-size:15px; border-bottom:1px solid var(--divider);">Чат</div>
+          <sc-for list="{{ chatList }}" as="c" hint-placeholder-count="4">
+            <div onClick="{{ c.selectFn }}" style="{{ c.rowStyle }}">
+              <div style="{{ c.avatarStyle }}">{{ c.initials }}</div>
+              <div style="min-width:0; flex:1;">
+                <div style="display:flex; justify-content:space-between; gap:6px;">
+                  <div style="font-weight:700; font-size:13.5px;">{{ c.name }}</div>
+                  <sc-if value="{{ c.unread }}" hint-placeholder-val="{{ false }}">
+                    <div style="width:8px; height:8px; border-radius:50%; background:#ff8c1a; margin-top:5px; flex-shrink:0;"></div>
+                  </sc-if>
+                </div>
+                <div style="font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ c.lastMessage }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="flex:1; display:flex; flex-direction:column; min-width:0;">
+          <div style="padding:16px 22px; border-bottom:1px solid var(--divider); display:flex; align-items:center; gap:12px;">
+            <div style="{{ activeChat.avatarStyle }}">{{ activeChat.initials }}</div>
+            <div style="font-weight:700; font-size:14px;">{{ activeChat.name }}</div>
+          </div>
+          <div style="flex:1; overflow-y:auto; padding:20px 22px; display:flex; flex-direction:column; gap:12px;">
+            <sc-for list="{{ activeChat.messages }}" as="m" hint-placeholder-count="4">
+              <div style="{{ m.bubbleWrapStyle }}">
+                <div style="{{ m.bubbleStyle }}">
+                  <sc-if value="{{ m.isQuestion }}" hint-placeholder-val="{{ false }}">
+                    <div style="font-size:10px; font-weight:800; text-transform:uppercase; color:#ff8c1a; margin-bottom:4px; letter-spacing:0.3px;">❓ Вопрос</div>
+                  </sc-if>
+                  {{ m.text }}
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="padding:14px 22px; border-top:1px solid var(--divider); display:flex; gap:10px;">
+            <input value="{{ chatDraft }}" onChange="{{ setChatDraft }}" placeholder="Написать сообщение…" style="flex:1; border:1px solid var(--input-border); border-radius:10px; padding:11px 14px; font-size:13px; outline:none; background:var(--card); color:var(--text);" />
+            <div onClick="{{ sendChatMessage }}" style="background:#12181a; color:#fff; font-weight:700; font-size:13px; padding:11px 18px; border-radius:10px; cursor:pointer;">Отправить</div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isSettingsView }}" hint-placeholder-val="{{ false }}">
+      <div style="max-width:560px;">
+        <div style="font-size:28px; font-weight:800; letter-spacing:-0.5px; margin-bottom:4px;">Настройки ИИ</div>
+        <div style="font-size:13px; color:var(--muted); margin-bottom:24px;">Подключите провайдера LLM для генерации и анализа тренировок.</div>
+
+        <div style="background:var(--card); border:1px solid var(--card-border); border-radius:16px; padding:22px;">
+          <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:6px;">URL API провайдера</div>
+          <input value="{{ aiApiUrl }}" onChange="{{ setAiApiUrl }}" placeholder="https://api.openai.com/v1" style="width:100%; border:1.5px solid var(--input-border); border-radius:10px; padding:11px 14px; font-size:13.5px; outline:none; margin-bottom:14px; background:var(--card); color:var(--text);" />
+
+          <div onClick="{{ detectModels }}" style="{{ detectButtonStyle }}">
+            <sc-if value="{{ aiDetecting }}" hint-placeholder-val="{{ false }}"><span>Определяем модели…</span></sc-if>
+            <sc-if value="{{ aiNotDetecting }}" hint-placeholder-val="{{ true }}"><span>Определить доступные модели</span></sc-if>
+          </div>
+
+          <sc-if value="{{ hasModels }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin:18px 0 8px;">Модель по умолчанию</div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <sc-for list="{{ aiModelOptions }}" as="m" hint-placeholder-count="3">
+                <div onClick="{{ m.selectFn }}" style="{{ m.rowStyle }}">
+                  <div style="{{ m.radioStyle }}"></div>
+                  <div style="font-size:13px; font-weight:600;">{{ m.name }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin:18px 0 6px;">API Key</div>
+          <input type="password" value="{{ aiApiKey }}" onChange="{{ setAiApiKey }}" placeholder="sk-…" style="width:100%; border:1.5px solid var(--input-border); border-radius:10px; padding:11px 14px; font-size:13.5px; outline:none; margin-bottom:20px; background:var(--card); color:var(--text);" />
+
+          <div onClick="{{ saveAiSettings }}" style="{{ saveAiButtonStyle }}">
+            <sc-if value="{{ aiSaved }}" hint-placeholder-val="{{ false }}"><span>✓ Сохранено</span></sc-if>
+            <sc-if value="{{ aiNotSaved }}" hint-placeholder-val="{{ true }}"><span>Сохранить настройки</span></sc-if>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+
+  <!-- INVITE ATHLETE MODAL -->
+  <sc-if value="{{ showInviteModal }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed; inset:0; background:rgba(15,20,18,0.45); display:flex; align-items:center; justify-content:center; z-index:50;">
+      <div style="background:var(--card); width:440px; max-width:92vw; border-radius:20px; padding:28px 30px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;">
+          <div style="font-size:18px; font-weight:800;">Пригласить спортсмена</div>
+          <div onClick="{{ closeInviteModal }}" style="cursor:pointer; font-size:18px; color:var(--muted);">✕</div>
+        </div>
+
+        <sc-if value="{{ inviteNotSent }}" hint-placeholder-val="{{ true }}">
+          <div style="font-size:12px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:8px;">Email спортсмена</div>
+          <input value="{{ inviteEmail }}" onChange="{{ setInviteEmail }}" placeholder="athlete@example.com" style="width:100%; border:1.5px solid var(--input-border); border-radius:10px; padding:11px 14px; font-size:13.5px; outline:none; margin-bottom:14px; background:var(--card); color:var(--text);" />
+
+          <div style="font-size:12px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:8px;">Имя (необязательно)</div>
+          <input value="{{ inviteName }}" onChange="{{ setInviteName }}" placeholder="Как обращаться к спортсмену" style="width:100%; border:1.5px solid var(--input-border); border-radius:10px; padding:11px 14px; font-size:13.5px; outline:none; margin-bottom:20px; background:var(--card); color:var(--text);" />
+
+          <div onClick="{{ sendInvite }}" style="{{ inviteButtonStyle }}">
+            <sc-if value="{{ inviteSending }}" hint-placeholder-val="{{ false }}">
+              <span style="display:inline-flex; gap:3px;">
+                <span style="width:6px;height:6px;border-radius:50%;background:var(--card);display:inline-block;animation:tp-dot 1.2s infinite;"></span>
+                <span style="width:6px;height:6px;border-radius:50%;background:var(--card);display:inline-block;animation:tp-dot 1.2s infinite .2s;"></span>
+                <span style="width:6px;height:6px;border-radius:50%;background:var(--card);display:inline-block;animation:tp-dot 1.2s infinite .4s;"></span>
+              </span>
+              <span>Отправляем…</span>
+            </sc-if>
+            <sc-if value="{{ inviteNotSending }}" hint-placeholder-val="{{ true }}">
+              <span>Отправить приглашение</span>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ inviteSent }}" hint-placeholder-val="{{ false }}">
+          <div style="text-align:center; padding:12px 0 6px;">
+            <div style="font-size:36px; margin-bottom:10px;">📩</div>
+            <div style="font-size:15px; font-weight:800; margin-bottom:6px;">Приглашение отправлено</div>
+            <div style="font-size:13px; color:var(--muted); margin-bottom:20px;">Спортсмен получит письмо на {{ inviteEmail }} со ссылкой для регистрации.</div>
+            <div onClick="{{ closeInviteModal }}" style="background:#12181a; color:#fff; font-weight:700; font-size:13.5px; padding:12px; border-radius:10px; cursor:pointer;">Готово</div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ADD WORKOUT MODAL -->
+  <sc-if value="{{ showModal }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed; inset:0; background:rgba(15,20,18,0.45); display:flex; align-items:center; justify-content:center; z-index:50;">
+      <div style="background:var(--card); width:640px; max-width:92vw; max-height:88vh; overflow-y:auto; border-radius:20px; padding:28px 30px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;">
+          <div style="font-size:18px; font-weight:800;">{{ modalTitle }}</div>
+          <div onClick="{{ closeModal }}" style="cursor:pointer; font-size:18px; color:var(--muted);">✕</div>
+        </div>
+
+        <div style="display:flex; background:var(--soft2); border-radius:10px; padding:3px; margin-bottom:20px; width:fit-content;">
+          <div onClick="{{ setModeDay }}" style="{{ modeDayStyle }}">Один день</div>
+          <div onClick="{{ setModeWeek }}" style="{{ modeWeekStyle }}">Целая неделя</div>
+        </div>
+
+        <!-- DAY MODE -->
+        <sc-if value="{{ isModeDay }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex; gap:12px; margin-bottom:14px;">
+            <div style="flex:1;">
+              <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:6px;">Дата</div>
+              <input type="date" value="{{ formDate }}" onChange="{{ setFormDate }}" style="width:100%; border:1.5px solid var(--input-border); border-radius:10px; padding:10px 12px; font-size:13.5px; outline:none; background:var(--card); color:var(--text);" />
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:6px;">Название (необязательно)</div>
+              <input value="{{ formTitle }}" onChange="{{ setFormTitle }}" placeholder="Например: Зал" style="width:100%; border:1.5px solid var(--input-border); border-radius:10px; padding:10px 12px; font-size:13.5px; outline:none; background:var(--card); color:var(--text);" />
+            </div>
+          </div>
+
+          <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:6px;">Содержание тренировки</div>
+          <textarea value="{{ formText }}" onChange="{{ setFormText }}" placeholder="Впишите или вставьте текст тренировки — разминку, раунды, упражнения, заминку…" style="width:100%; min-height:220px; border:1.5px solid var(--input-border); border-radius:12px; padding:14px 16px; font-size:13.5px; line-height:1.6; resize:vertical; outline:none; background:var(--card); color:var(--text); font-family:inherit; white-space:pre-wrap;"></textarea>
+
+          <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">
+            <div onClick="{{ saveWorkout }}" style="{{ saveButtonStyle }}">Сохранить</div>
+            <div onClick="{{ runRewrite }}" style="{{ rewriteButtonStyle }}">
+              <sc-if value="{{ isRewriting }}" hint-placeholder-val="{{ false }}">
+                <span style="display:inline-flex; gap:3px;">
+                  <span style="width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block;animation:tp-dot 1.2s infinite;"></span>
+                  <span style="width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block;animation:tp-dot 1.2s infinite .2s;"></span>
+                  <span style="width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block;animation:tp-dot 1.2s infinite .4s;"></span>
+                </span>
+              </sc-if>
+              <span>✎ Переписать с ИИ</span>
+            </div>
+            <div onClick="{{ runCreate }}" style="{{ createButtonStyle }}">
+              <sc-if value="{{ isCreating }}" hint-placeholder-val="{{ false }}">
+                <span style="display:inline-flex; gap:3px;">
+                  <span style="width:6px;height:6px;border-radius:50%;background:#fff;display:inline-block;animation:tp-dot 1.2s infinite;"></span>
+                  <span style="width:6px;height:6px;border-radius:50%;background:#fff;display:inline-block;animation:tp-dot 1.2s infinite .2s;"></span>
+                  <span style="width:6px;height:6px;border-radius:50%;background:#fff;display:inline-block;animation:tp-dot 1.2s infinite .4s;"></span>
+                </span>
+              </sc-if>
+              <span>✨ Создать с ИИ</span>
+            </div>
+          </div>
+
+          <!-- REWRITE DIFF -->
+          <sc-if value="{{ showRewriteDiff }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:18px; border-top:1px solid var(--divider); padding-top:16px;">
+              <div style="font-size:12px; font-weight:700; text-transform:uppercase; color:#1f9d55; margin-bottom:10px;">ИИ предлагает изменения</div>
+              <div style="background:var(--soft); border-radius:12px; padding:14px 16px; max-height:260px; overflow-y:auto;">
+                <sc-for list="{{ diffLines }}" as="dl" hint-placeholder-count="8">
+                  <div style="{{ dl.style }}">{{ dl.text }}</div>
+                </sc-for>
+              </div>
+              <div style="display:flex; gap:10px; margin-top:14px;">
+                <div onClick="{{ acceptRewrite }}" style="background:#1f9d55; color:#fff; font-weight:700; font-size:13px; padding:10px 18px; border-radius:10px; cursor:pointer;">Принять изменения</div>
+                <div onClick="{{ rejectRewrite }}" style="background:var(--soft2); color:var(--muted-strong); font-weight:700; font-size:13px; padding:10px 18px; border-radius:10px; cursor:pointer;">Отклонить</div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- CREATE CONFIRM -->
+          <sc-if value="{{ showCreateConfirm }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:18px; border-top:1px solid var(--divider); padding-top:16px;">
+              <div style="font-size:12px; font-weight:700; text-transform:uppercase; color:#1f9d55; margin-bottom:10px;">ИИ сгенерировал тренировку — подтвердите применение</div>
+              <div style="background:var(--report-bg); border:1px solid var(--report-border); border-radius:12px; padding:14px 16px; font-size:13.5px; line-height:1.6; color:var(--report-text); white-space:pre-wrap; max-height:260px; overflow-y:auto;">{{ createDraft }}</div>
+              <div style="display:flex; gap:10px; margin-top:14px;">
+                <div onClick="{{ confirmCreate }}" style="background:#1f9d55; color:#fff; font-weight:700; font-size:13px; padding:10px 18px; border-radius:10px; cursor:pointer;">Подтвердить и вставить</div>
+                <div onClick="{{ rejectCreate }}" style="background:var(--soft2); color:var(--muted-strong); font-weight:700; font-size:13px; padding:10px 18px; border-radius:10px; cursor:pointer;">Отклонить</div>
+              </div>
+            </div>
+          </sc-if>
+        </sc-if>
+
+        <!-- WEEK MODE -->
+        <sc-if value="{{ isModeWeek }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+            <div style="font-size:12.5px; color:var(--muted);">Заполните текст на каждый день или сгенерируйте всю неделю сразу.</div>
+            <div onClick="{{ runWeekAi }}" style="{{ weekAiButtonStyle }}">
+              <sc-if value="{{ isWeekAiGenerating }}" hint-placeholder-val="{{ false }}">
+                <span style="display:inline-flex; gap:3px;">
+                  <span style="width:6px;height:6px;border-radius:50%;background:#fff;display:inline-block;animation:tp-dot 1.2s infinite;"></span>
+                  <span style="width:6px;height:6px;border-radius:50%;background:#fff;display:inline-block;animation:tp-dot 1.2s infinite .2s;"></span>
+                  <span style="width:6px;height:6px;border-radius:50%;background:#fff;display:inline-block;animation:tp-dot 1.2s infinite .4s;"></span>
+                </span>
+              </sc-if>
+              <span>✨ Создать с ИИ</span>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px;">
+            <sc-for list="{{ weekFields }}" as="wf" hint-placeholder-count="7">
+              <div>
+                <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:5px;">{{ wf.label }}</div>
+                <textarea value="{{ wf.text }}" onChange="{{ wf.setFn }}" placeholder="Текст тренировки на этот день…" style="width:100%; min-height:64px; border:1.5px solid var(--input-border); border-radius:10px; padding:10px 12px; font-size:13px; line-height:1.5; resize:vertical; outline:none; background:var(--card); color:var(--text); font-family:inherit; white-space:pre-wrap;"></textarea>
+              </div>
+            </sc-for>
+          </div>
+
+          <sc-if value="{{ showWeekDraft }}" hint-placeholder-val="{{ false }}">
+            <div style="border-top:1px solid var(--divider); padding-top:16px; margin-bottom:16px;">
+              <div style="font-size:12px; font-weight:700; text-transform:uppercase; color:#1f9d55; margin-bottom:10px;">ИИ сгенерировал неделю — подтвердите применение</div>
+              <div style="display:flex; flex-direction:column; gap:8px; max-height:220px; overflow-y:auto;">
+                <sc-for list="{{ weekDraftPreview }}" as="wd" hint-placeholder-count="7">
+                  <div style="background:var(--report-bg); border:1px solid var(--report-border); border-radius:10px; padding:10px 12px;">
+                    <div style="font-size:11px; font-weight:700; color:var(--report-text); text-transform:uppercase; margin-bottom:4px;">{{ wd.label }}</div>
+                    <div style="font-size:12.5px; color:var(--report-text); white-space:pre-wrap; line-height:1.5;">{{ wd.text }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display:flex; gap:10px; margin-top:14px;">
+                <div onClick="{{ confirmWeekAi }}" style="background:#1f9d55; color:#fff; font-weight:700; font-size:13px; padding:10px 18px; border-radius:10px; cursor:pointer;">Подтвердить и вставить</div>
+                <div onClick="{{ rejectWeekAi }}" style="background:var(--soft2); color:var(--muted-strong); font-weight:700; font-size:13px; padding:10px 18px; border-radius:10px; cursor:pointer;">Отклонить</div>
+              </div>
+            </div>
+          </sc-if>
+
+          <div onClick="{{ saveWorkout }}" style="background:#1f9d55; color:#fff; font-weight:700; font-size:13.5px; padding:12px; border-radius:10px; text-align:center; cursor:pointer;">Сохранить неделю и отправить спортсмену</div>
+        </sc-if>
+
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const ATHLETES_SEED = [
+  { id:'a1', name:'Анна Соколова', level:'Марафон · 3:15', color:'#1f9d55', todayType:'Интервалы 6х800м', todayStatus:'pending', unreadQuestion:true, compliance:92 },
+  { id:'a2', name:'Дмитрий Орлов', level:'Трейл · 42км', color:'#1f6feb', todayType:'Длительная 18км', todayStatus:'done', unreadQuestion:false, compliance:87 },
+  { id:'a3', name:'Мария Волкова', level:'OCR · Спартан', color:'#ff8c1a', todayType:'ОФП + препятствия', todayStatus:'missed', unreadQuestion:false, compliance:64 },
+  { id:'a4', name:'Сергей Титов', level:'10км · Начинающий', color:'#8b5cf6', todayType:'Отдых', todayStatus:'rest', unreadQuestion:false, compliance:100 },
+  { id:'a5', name:'Елена Гусева', level:'Трейл · 21км', color:'#e0455f', todayType:'Темповая 8км', todayStatus:'pending', unreadQuestion:true, compliance:78 },
+];
+
+const PENDING_ATHLETES_SEED = [
+  { id:'p1', name:'Павел Никитин', email:'pavel.nikitin@mail.com', color:'#8a9a96' },
+];
+
+const WEEK_DAYS = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+const WEEK_DAYS_FULL = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье'];
+
+const GYM_DAY_TEXT = `Суставная разминка
+
+4 раунда (спокойно):
+- 10 Ротация + жим в наклоне
+- 5 Червяков с отжиманием
+- 20 Ножницы в позиции Холлоу
+- 5 Подтягиваний
+
+Отдых 3-5 мин
+
+5 раундов:
+- 10 Жимов штанги 15 кг стоя
+- 10 Колени к локтям на турнике
+- 15 Супермен
+- 10 Колени к груди на полу
+- 10 Отжиманий с выпрямлением рук вперед
+- 1 мин Отдых
+*работаем максимально интенсивно
+
+Растяжка`;
+
+function buildWeek(athleteId) {
+  const templates = {
+    a1: [
+      { title:'Зал', date:'6 июля', status:'done', rawText: GYM_DAY_TEXT, hasReport:true, reportText:'Сделала всё по плану, было тяжело на третьем круге, но справилась. Самочувствие хорошее.', reportRpe:6 },
+      { title:'Интервалы 6х800м', date:'7 июля', status:'pending', rawText: `Разминка 15 минут лёгкого бега\n\n6 x 800м в темпе 3:55/км\nОтдых 400м трусцой между отрезками\n\nЗаминка 10 минут`, hasReport:false },
+      { title:'Восстановительный', date:'8 июля', status:'done', rawText: `6 км в очень лёгком темпе\nПульс не выше Zone 1-2`, hasReport:true, reportText:'Лёгкий бег, ноги ещё гудели после интервалов, но в целом норм.', reportRpe:3 },
+      { title:'Темповая', date:'9 июля', status:'missed', rawText: `Разминка 10 минут\n5 км в темпе 4:20/км\nЗаминка 10 минут`, hasReport:false },
+      { title:'Зал', date:'10 июля', status:'done', rawText: `Разминка 10 минут\n\nСиловая часть, 3 круга:\n- Присед со штангой\n- Тяга в наклоне\n- Планка 60 сек`, hasReport:true, reportText:'Хорошая тренировка, добавила вес на приседе.', reportRpe:5 },
+      { title:'Длительная 16км', date:'11 июля', status:'pending', rawText: `16 км в спокойном темпе\nПоследние 3 км чуть быстрее целевого`, hasReport:false },
+      { title:'Отдых', date:'12 июля', status:'rest', rawText:'', hasReport:false },
+    ],
+    a5: [
+      { title:'Кросс', date:'6 июля', status:'done', rawText: `10 минут разминки\n8 км по пересечённой местности`, hasReport:true, reportText:'Бежала по лесу, было скользко после дождя, темп ниже планового.', reportRpe:5 },
+      { title:'Темповая 8км', date:'7 июля', status:'pending', rawText: `12 минут разминки\n8 км в темпе 4:40/км`, hasReport:false },
+      { title:'Отдых', date:'8 июля', status:'rest', rawText:'', hasReport:false },
+      { title:'Интервалы в горку', date:'9 июля', status:'done', rawText: `15 минут разминки\n\n8 х 45 сек в подъём\nСпуск трусцой`, hasReport:true, reportText:'Тяжело, но выполнила все повторения. Пульс уходил в 5 зону на последних.', reportRpe:8 },
+      { title:'Восстановительный', date:'10 июля', status:'pending', rawText:'5 км трусцой', hasReport:false },
+      { title:'Длинная трейл', date:'11 июля', status:'missed', rawText: `21 км по трейлу с набором 600м`, hasReport:false },
+      { title:'Отдых', date:'12 июля', status:'rest', rawText:'', hasReport:false },
+    ],
+  };
+  return templates[athleteId] || templates.a1;
+}
+
+const CHAT_SEED = {
+  a1: { messages:[
+    { from:'athlete', text:'Привет! Можно сегодня заменить интервалы на манеж, на улице гололёд?', isQuestion:true },
+    { from:'coach', text:'Да, конечно, беги в манеже, темп можно сохранить.' },
+  ]},
+  a2: { messages:[
+    { from:'athlete', text:'Отчёт по длительной отправил, всё по плану 👍' },
+    { from:'coach', text:'Отлично, видел. Молодец!' },
+  ]},
+  a3: { messages:[
+    { from:'coach', text:'Мария, вы пропустили вчерашнюю ОФП, всё в порядке?' },
+  ]},
+  a4: { messages:[
+    { from:'athlete', text:'Спасибо за план на неделю!' },
+  ]},
+  a5: { messages:[
+    { from:'athlete', text:'На трейле в субботу будет сильный дождь, что делать с длинной тренировкой?', isQuestion:true },
+  ]},
+};
+
+function getTokens(mode) {
+  return mode === 'dark' ? {
+    bg:'#15191a', card:'#1e2427', cardBorder:'#2b3236', border:'#2b3236', text:'#eef1ef',
+    muted:'#8fa19c', mutedStrong:'#c7d0cd', divider:'#262d30', inputBorder:'#333c40',
+    soft:'#242b2e', soft2:'#272f32', rowHover:'#232a2d', borderHover:'#3a4448',
+    pendingCardBg:'#1a1f21', pendingCardBorder:'#333c40',
+    pendingBadgeBg:'#3a2f12', pendingBadgeText:'#e0b23d',
+    reportBg:'#12281b', reportBorder:'#204a30', reportText:'#8fd6ac',
+    chatSelectedBg:'#15281c', chatDivider:'#242b2e',
+    doneBg:'#163523', doneText:'#3ecb7b', pendingBg:'#3a2f12', pendingText:'#e0b23d',
+    missedBg:'#3a1c20', missedText:'#f2828f', restBg:'#272f32', restText:'#aab6b2',
+    bubbleNeutralBg:'#262d30', bubbleQuestionBg:'#3a2f12',
+    segSelectedBg:'#eef1ef', segSelectedText:'#12181a',
+    diffAddedBg:'#12281b', diffAddedText:'#8fd6ac', diffRemovedBg:'#3a1c20', diffRemovedText:'#f2b3ba',
+  } : {
+    bg:'#f3f5f1', card:'#ffffff', cardBorder:'#e7ece5', border:'#e7ece5', text:'#12181a',
+    muted:'#8a9a96', mutedStrong:'#42504d', divider:'#eef0ec', inputBorder:'#e0e5dd',
+    soft:'#f6f7f5', soft2:'#f0f2ee', rowHover:'#f8faf7', borderHover:'#d3ddd0',
+    pendingCardBg:'#fbfbfa', pendingCardBorder:'#dfe4db',
+    pendingBadgeBg:'#fff3d9', pendingBadgeText:'#8a6d1a',
+    reportBg:'#f0f9f3', reportBorder:'#cdeeda', reportText:'#1a4d2e',
+    chatSelectedBg:'#f0f9f3', chatDivider:'#f5f6f3',
+    doneBg:'#e6f7ec', doneText:'#1f9d55', pendingBg:'#fff3d9', pendingText:'#8a6d1a',
+    missedBg:'#fdeaec', missedText:'#c23b4a', restBg:'#eef0ec', restText:'#5b6b68',
+    bubbleNeutralBg:'#f0f2ee', bubbleQuestionBg:'#fff6ea',
+    segSelectedBg:'#12181a', segSelectedText:'#ffffff',
+    diffAddedBg:'#e6f7ec', diffAddedText:'#1a4d2e', diffRemovedBg:'#fdeaec', diffRemovedText:'#8a2530',
+  };
+}
+
+function getStatusMeta(status, T) {
+  const map = {
+    done: { label:'Выполнено', color:T.doneText, bg:T.doneBg },
+    pending: { label:'Ожидание', color:T.pendingText, bg:T.pendingBg },
+    missed: { label:'Пропущено', color:T.missedText, bg:T.missedBg },
+    rest: { label:'Отдых', color:T.restText, bg:T.restBg },
+  };
+  return map[status];
+}
+
+function initials(name) {
+  return name.split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase();
+}
+
+function toLines(text) {
+  if (!text) return [];
+  return text.split('\n').map(line => {
+    const trimmed = line.trim();
+    if (!trimmed) return { text:'', bullet:false, plain:false, blank:true };
+    if (trimmed.startsWith('- ')) return { text: trimmed.slice(2), bullet:true, plain:false, blank:false };
+    return { text: line, bullet:false, plain:true, blank:false };
+  });
+}
+
+function mockRewrite(original) {
+  const lines = (original || '').split('\n');
+  const newLines = lines.map(line => {
+    const trimmed = line.trim();
+    if (!trimmed) return line;
+    if (trimmed.startsWith('- ')) return line + ' (следим за техникой)';
+    if (/^\d+\s*(раунд|круг)/i.test(trimmed)) return line + ' — держим темп стабильным';
+    return line;
+  });
+  newLines.push('', 'После тренировки — вода и растяжка 5 минут.');
+  return newLines.join('\n');
+}
+
+function mockCreate(shortText) {
+  const hint = (shortText || '').trim().split('\n')[0];
+  const header = hint ? hint + '\n\n' : '';
+  return `${header}Суставная разминка 10 минут\n\n4 раунда:\n- 10 приседаний\n- 10 отжиманий\n- 20 сек планка\n- 15 скручиваний\nОтдых 2 мин между раундами\n\nЗаминка и растяжка 10 минут`;
+}
+
+function computeDiff(oldText, newText) {
+  const oldLines = (oldText || '').split('\n');
+  const newLines = (newText || '').split('\n');
+  const max = Math.max(oldLines.length, newLines.length);
+  const result = [];
+  for (let i = 0; i < max; i++) {
+    const o = oldLines[i];
+    const n = newLines[i];
+    if (o === undefined) { result.push({ type:'added', text: n }); continue; }
+    if (n === undefined) { result.push({ type:'removed', text: o }); continue; }
+    if (o === n) { result.push({ type:'same', text: o }); continue; }
+    result.push({ type:'removed', text: o });
+    result.push({ type:'added', text: n });
+  }
+  return result;
+}
+
+function todayIso() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+const BASE_MONDAY = new Date(2026, 6, 6);
+function addDays(date, days) { const d = new Date(date); d.setDate(d.getDate() + days); return d; }
+function formatRuDate(date) { return date.toLocaleDateString('ru-RU', { day:'numeric', month:'long' }); }
+function weekRangeLabelFor(offset) {
+  const start = addDays(BASE_MONDAY, offset * 7);
+  const end = addDays(start, 6);
+  const startStr = start.toLocaleDateString('ru-RU', { day:'numeric', month: start.getMonth()===end.getMonth() ? undefined : 'long' });
+  const endStr = end.toLocaleDateString('ru-RU', { day:'numeric', month:'long' });
+  return `${startStr} – ${endStr}`;
+}
+function datesForOffset(offset) {
+  return Array.from({ length:7 }, (_, i) => formatRuDate(addDays(BASE_MONDAY, offset * 7 + i)));
+}
+function dateToOffsetAndIndex(dateStr) {
+  const picked = new Date(dateStr + 'T00:00:00');
+  const diffDays = Math.round((picked - BASE_MONDAY) / 86400000);
+  const offset = Math.floor(diffDays / 7);
+  const index = ((diffDays % 7) + 7) % 7;
+  return { offset, index };
+}
+function weekForOffset(athleteId, offset) {
+  const base = buildWeek(athleteId);
+  const dates = datesForOffset(offset);
+  if (offset === 0) return base.map((d, i) => ({ ...d, date: dates[i] }));
+  if (offset < 0) return base.map((d, i) => ({ ...d, date: dates[i], status: d.rawText ? 'done' : 'rest', hasReport: !!d.rawText, reportText: d.reportText || 'Тренировка выполнена по плану.', reportRpe: d.reportRpe || 6 }));
+  return base.map((d, i) => ({ ...d, date: dates[i], status: d.rawText ? 'future' : 'rest', rawText: '', hasReport:false }));
+}
+
+function mockDetectModels(url) {
+  const u = (url || '').toLowerCase();
+  if (u.includes('openai')) return ['gpt-4.1', 'gpt-4.1-mini', 'gpt-4o'];
+  if (u.includes('anthropic')) return ['claude-opus-4', 'claude-sonnet-4', 'claude-haiku-4'];
+  if (u.includes('openrouter')) return ['meta-llama/llama-3.1-70b', 'mistralai/mixtral-8x22b', 'google/gemini-pro-1.5'];
+  if (u.trim()) return ['default-model'];
+  return [];
+}
+
+function loadAiSettings() {
+  try {
+    const raw = typeof localStorage !== 'undefined' ? localStorage.getItem('reps_ai_settings') : null;
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) { return {}; }
+}
+
+class Component extends DCLogic {
+  state = {
+    view: 'list',
+    dashStyle: 'cards',
+    selectedAthleteId: null,
+    activeDayIndex: null,
+    showModal: false,
+    modalAthleteId: null,
+    modalMode: 'day',
+
+    formDate: todayIso(),
+    formTitle: '',
+    formText: '',
+    isRewriting: false,
+    isCreating: false,
+    showRewriteDiff: false,
+    rewriteOriginal: '',
+    rewriteResult: '',
+    showCreateConfirm: false,
+    createDraft: '',
+
+    weekTexts: ['', '', '', '', '', '', ''],
+    isWeekAiGenerating: false,
+    showWeekDraft: false,
+    weekDraft: ['', '', '', '', '', '', ''],
+
+    chatSelectedId: 'a1',
+    chatDraft: '',
+    chats: JSON.parse(JSON.stringify(CHAT_SEED)),
+    pendingAthletes: PENDING_ATHLETES_SEED,
+    theme: (typeof localStorage !== 'undefined' && localStorage.getItem('reps_theme')) || 'light',
+    showInviteModal: false,
+    inviteEmail: '',
+    inviteName: '',
+    inviteSending: false,
+    inviteSent: false,
+    weekOffset: 0,
+
+    aiApiUrl: loadAiSettings().apiUrl || '',
+    aiApiKey: loadAiSettings().apiKey || '',
+    aiModels: loadAiSettings().models || [],
+    aiSelectedModel: loadAiSettings().model || '',
+    aiDetecting: false,
+    aiSaved: false,
+  };
+
+  goList = () => this.setState({ view:'list' });
+  goChat = () => this.setState({ view:'chat' });
+  goSettings = () => this.setState({ view:'settings' });
+
+  setAiApiUrl = (e) => this.setState({ aiApiUrl: e.target.value, aiSaved:false });
+  setAiApiKey = (e) => this.setState({ aiApiKey: e.target.value, aiSaved:false });
+  detectModels = () => {
+    if (this.state.aiDetecting) return;
+    this.setState({ aiDetecting:true });
+    setTimeout(() => {
+      const models = mockDetectModels(this.state.aiApiUrl);
+      this.setState({ aiDetecting:false, aiModels: models, aiSelectedModel: models[0] || '', aiSaved:false });
+    }, 900);
+  };
+  selectAiModel = (m) => this.setState({ aiSelectedModel: m, aiSaved:false });
+  saveAiSettings = () => {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('reps_ai_settings', JSON.stringify({ apiUrl:this.state.aiApiUrl, apiKey:this.state.aiApiKey, models:this.state.aiModels, model:this.state.aiSelectedModel }));
+    }
+    this.setState({ aiSaved:true });
+  };
+
+  toggleTheme = () => {
+    const next = this.state.theme === 'dark' ? 'light' : 'dark';
+    if (typeof localStorage !== 'undefined') localStorage.setItem('reps_theme', next);
+    this.setState({ theme: next });
+  };
+
+  setDashCards = () => this.setState({ dashStyle:'cards' });
+  setDashCompact = () => this.setState({ dashStyle:'compact' });
+
+  openAthlete = (id) => this.setState({ view:'athlete', selectedAthleteId:id, activeDayIndex:0, weekOffset:0 });
+
+  selectDay = (idx) => this.setState({ activeDayIndex: idx });
+  prevWeek = () => this.setState({ weekOffset: this.state.weekOffset - 1 });
+  nextWeek = () => this.setState({ weekOffset: this.state.weekOffset + 1 });
+  setDatePick = (e) => {
+    if (!e.target.value) return;
+    const { offset, index } = dateToOffsetAndIndex(e.target.value);
+    this.setState({ weekOffset: offset, activeDayIndex: index });
+  };
+
+  openAddDay = () => this.setState({
+    showModal:true, modalMode:'day', modalAthleteId:this.state.selectedAthleteId,
+    formDate: todayIso(), formTitle:'', formText:'',
+    isRewriting:false, isCreating:false, showRewriteDiff:false, showCreateConfirm:false, createDraft:'',
+  });
+  openAddWeek = () => this.setState({
+    showModal:true, modalMode:'week', modalAthleteId:this.state.selectedAthleteId,
+    weekTexts: ['', '', '', '', '', '', ''], isWeekAiGenerating:false, showWeekDraft:false, weekDraft: ['', '', '', '', '', '', ''],
+  });
+  closeModal = () => this.setState({ showModal:false });
+  setModeDay = () => this.setState({ modalMode:'day' });
+  setModeWeek = () => this.setState({ modalMode:'week' });
+
+  setFormDate = (e) => this.setState({ formDate: e.target.value });
+  setFormTitle = (e) => this.setState({ formTitle: e.target.value });
+  setFormText = (e) => this.setState({ formText: e.target.value });
+
+  runRewrite = () => {
+    if (this.state.isRewriting || !this.state.formText.trim()) return;
+    this.setState({ isRewriting:true, showRewriteDiff:false, showCreateConfirm:false });
+    setTimeout(() => {
+      const rewritten = mockRewrite(this.state.formText);
+      this.setState({ isRewriting:false, showRewriteDiff:true, rewriteOriginal:this.state.formText, rewriteResult:rewritten });
+    }, 1400);
+  };
+  acceptRewrite = () => this.setState({ formText: this.state.rewriteResult, showRewriteDiff:false });
+  rejectRewrite = () => this.setState({ showRewriteDiff:false });
+
+  runCreate = () => {
+    if (this.state.isCreating) return;
+    this.setState({ isCreating:true, showCreateConfirm:false, showRewriteDiff:false });
+    setTimeout(() => {
+      const draft = mockCreate(this.state.formText);
+      this.setState({ isCreating:false, showCreateConfirm:true, createDraft: draft });
+    }, 1600);
+  };
+  confirmCreate = () => this.setState({ formText: this.state.createDraft, showCreateConfirm:false });
+  rejectCreate = () => this.setState({ showCreateConfirm:false });
+
+  setWeekText = (i, e) => {
+    const texts = [...this.state.weekTexts];
+    texts[i] = e.target.value;
+    this.setState({ weekTexts: texts });
+  };
+
+  runWeekAi = () => {
+    if (this.state.isWeekAiGenerating) return;
+    this.setState({ isWeekAiGenerating:true, showWeekDraft:false });
+    setTimeout(() => {
+      const draft = this.state.weekTexts.map((t, i) => t.trim() ? mockRewrite(t) : mockCreate(''));
+      this.setState({ isWeekAiGenerating:false, showWeekDraft:true, weekDraft: draft });
+    }, 1800);
+  };
+  confirmWeekAi = () => this.setState({ weekTexts: [...this.state.weekDraft], showWeekDraft:false });
+  rejectWeekAi = () => this.setState({ showWeekDraft:false });
+
+  saveWorkout = () => this.setState({ showModal:false });
+
+  openInvite = () => this.setState({ showInviteModal:true, inviteEmail:'', inviteName:'', inviteSending:false, inviteSent:false });
+  closeInviteModal = () => this.setState({ showInviteModal:false });
+  setInviteEmail = (e) => this.setState({ inviteEmail: e.target.value });
+  setInviteName = (e) => this.setState({ inviteName: e.target.value });
+  sendInvite = () => {
+    if (this.state.inviteSending || !this.state.inviteEmail.trim()) return;
+    this.setState({ inviteSending:true });
+    setTimeout(() => {
+      const newAthlete = { id:'p' + (this.state.pendingAthletes.length + Date.now()), name: this.state.inviteName.trim() || this.state.inviteEmail, email: this.state.inviteEmail, color:'#8a9a96' };
+      this.setState({ inviteSending:false, inviteSent:true, pendingAthletes: [...this.state.pendingAthletes, newAthlete] });
+    }, 1200);
+  };
+  resendInvite = (id) => {
+    // demo no-op, could show a toast
+  };
+
+  setChatDraft = (e) => this.setState({ chatDraft: e.target.value });
+  selectChat = (id) => {
+    const chats = { ...this.state.chats };
+    if (chats[id]) chats[id] = { ...chats[id], messages: chats[id].messages.map(m => ({ ...m, isQuestion:false })) };
+    this.setState({ chatSelectedId:id, chats });
+  };
+  sendChatMessage = () => {
+    if (!this.state.chatDraft.trim()) return;
+    const chats = { ...this.state.chats };
+    const id = this.state.chatSelectedId;
+    chats[id] = { ...chats[id], messages: [...chats[id].messages, { from:'coach', text:this.state.chatDraft }] };
+    this.setState({ chats, chatDraft:'' });
+  };
+
+  renderVals() {
+    const s = this.state;
+    const T = getTokens(s.theme);
+    const athletesRaw = ATHLETES_SEED;
+    const selectedRaw = athletesRaw.find(a => a.id === s.selectedAthleteId) || athletesRaw[0];
+    const week = weekForOffset(selectedRaw.id, s.weekOffset);
+
+    const athletes = athletesRaw.map(a => {
+      const meta = getStatusMeta(a.todayStatus, T);
+      return {
+        ...a,
+        isActive: true,
+        invitePending: false,
+        initials: initials(a.name),
+        avatarStyle: `width:44px;height:44px;border-radius:50%;background:${a.color};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;`,
+        avatarStyleSm: `width:34px;height:34px;border-radius:50%;background:${a.color};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;`,
+        statusLabel: meta.label,
+        statusChipStyle: `font-size:11.5px;font-weight:700;color:${meta.color};background:${meta.bg};padding:4px 10px;border-radius:20px;`,
+        cardOuterStyle: `background:${T.card}; border-radius:16px; padding:18px; cursor:pointer; box-shadow:0 1px 2px rgba(0,0,0,0.04); border:1px solid ${T.cardBorder}; transition:box-shadow .15s; position:relative;`,
+        cardOuterHoverStyle: `box-shadow:0 6px 20px rgba(0,0,0,0.08); border-color:${T.borderHover};`,
+        rowOuterStyle: `display:grid; grid-template-columns:1.6fr 1.4fr 1fr 32px; align-items:center; padding:14px 20px; border-bottom:1px solid ${T.divider}; cursor:pointer;`,
+        rowOuterHoverStyle: `background:${T.rowHover};`,
+        openFn: () => this.openAthlete(a.id),
+      };
+    });
+
+    const pendingAthletes = s.pendingAthletes.map(p => ({
+      ...p,
+      isActive: false,
+      invitePending: true,
+      unreadQuestion: false,
+      level: '',
+      initials: initials(p.name),
+      avatarStyle: `width:44px;height:44px;border-radius:50%;background:${T.soft2};color:${T.muted};display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;`,
+      avatarStyleSm: `width:34px;height:34px;border-radius:50%;background:${T.soft2};color:${T.muted};display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;`,
+      cardOuterStyle: `background:${T.pendingCardBg}; border-radius:16px; padding:18px; cursor:default; border:1.5px dashed ${T.pendingCardBorder}; position:relative;`,
+      cardOuterHoverStyle: ``,
+      rowOuterStyle: `display:grid; grid-template-columns:1.6fr 1.4fr 1fr 32px; align-items:center; padding:14px 20px; border-bottom:1px solid ${T.divider}; cursor:default; opacity:0.85;`,
+      rowOuterHoverStyle: ``,
+      openFn: () => {},
+      resendFn: () => this.resendInvite(p.id),
+    }));
+
+    const allAthletes = [...athletes, ...pendingAthletes];
+
+    const dashStyle = s.dashStyle;
+    const segCardsStyle = `padding:7px 16px; border-radius:8px; font-size:12.5px; font-weight:700; cursor:pointer; ${dashStyle==='cards' ? `background:${T.segSelectedBg}; color:${T.segSelectedText};` : `color:${T.mutedStrong};`}`;
+    const segCompactStyle = `padding:7px 16px; border-radius:8px; font-size:12.5px; font-weight:700; cursor:pointer; ${dashStyle==='compact' ? `background:${T.segSelectedBg}; color:${T.segSelectedText};` : `color:${T.mutedStrong};`}`;
+
+    const weekVals = week.map((d, i) => {
+      const meta = getStatusMeta(d.status, T);
+      const active = i === (s.activeDayIndex ?? 0);
+      return {
+        ...d,
+        dayLabel: WEEK_DAYS[i],
+        dayFull: WEEK_DAYS_FULL[i],
+        cardStyle: `background:${active ? T.segSelectedBg : T.card}; color:${active ? T.segSelectedText : T.text}; border:1px solid ${active ? T.segSelectedBg : T.cardBorder}; border-radius:14px; padding:14px 12px; cursor:pointer; text-align:center;`,
+        statusDotStyle: `width:8px;height:8px;border-radius:50%;background:${meta.color};margin:0 auto;`,
+        selectFn: () => this.selectDay(i),
+      };
+    });
+
+    const activeDayRaw = week[s.activeDayIndex ?? 0];
+    const activeDay = {
+      ...activeDayRaw,
+      dayFull: WEEK_DAYS_FULL[s.activeDayIndex ?? 0],
+      titleSuffix: activeDayRaw.title ? ' — ' + activeDayRaw.title : '',
+      hasPlan: !!activeDayRaw.rawText,
+      hasNoPlan: !activeDayRaw.rawText,
+      lines: toLines(activeDayRaw.rawText),
+      hasNoReport: !activeDayRaw.hasReport,
+      noReportLabel: activeDayRaw.status === 'rest' ? 'День отдыха.' : activeDayRaw.status === 'missed' ? 'Тренировка не выполнена, отчёт не поступил.' : 'Ожидает выполнения и отчёта.',
+    };
+
+    const unreadChatCount = Object.values(s.chats).filter(c => c.messages.some(m => m.isQuestion)).length;
+
+    const chatList = athletesRaw.map(a => {
+      const chat = s.chats[a.id];
+      const unread = chat.messages.some(m => m.isQuestion);
+      const active = a.id === s.chatSelectedId;
+      return {
+        id: a.id, name: a.name, initials: initials(a.name), unread,
+        lastMessage: chat.messages[chat.messages.length-1]?.text || '',
+        avatarStyle: `width:38px;height:38px;border-radius:50%;background:${a.color};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;`,
+        rowStyle: `display:flex; gap:10px; align-items:center; padding:12px 18px; cursor:pointer; border-bottom:1px solid ${T.chatDivider}; ${active ? `background:${T.chatSelectedBg};` : ''} ${unread ? 'border-left:3px solid #ff8c1a;' : 'border-left:3px solid transparent;'}`,
+        selectFn: () => this.selectChat(a.id),
+      };
+    });
+
+    const activeChatRaw = athletesRaw.find(a => a.id === s.chatSelectedId) || athletesRaw[0];
+    const activeChatData = s.chats[activeChatRaw.id];
+    const activeChat = {
+      name: activeChatRaw.name,
+      initials: initials(activeChatRaw.name),
+      avatarStyle: `width:36px;height:36px;border-radius:50%;background:${activeChatRaw.color};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px;`,
+      messages: activeChatData.messages.map(m => ({
+        text: m.text,
+        isQuestion: !!m.isQuestion,
+        bubbleWrapStyle: `display:flex; ${m.from==='coach' ? 'justify-content:flex-end;' : 'justify-content:flex-start;'}`,
+        bubbleStyle: `max-width:70%; padding:11px 14px; border-radius:14px; font-size:13.5px; line-height:1.5; ${m.from==='coach' ? 'background:#12181a; color:#fff;' : (m.isQuestion ? `background:${T.bubbleQuestionBg}; border:1.5px solid #ff8c1a; color:${T.text};` : `background:${T.bubbleNeutralBg}; color:${T.text};`)}`,
+      })),
+    };
+
+    const diffLines = s.showRewriteDiff ? computeDiff(s.rewriteOriginal, s.rewriteResult).map(dl => ({
+      text: (dl.type === 'removed' ? '− ' : dl.type === 'added' ? '+ ' : '  ') + dl.text,
+      style: `font-size:12.5px; line-height:1.6; font-family:ui-monospace, monospace; white-space:pre-wrap; padding:2px 6px; border-radius:4px; ${dl.type==='added' ? `background:${T.diffAddedBg}; color:${T.diffAddedText};` : dl.type==='removed' ? `background:${T.diffRemovedBg}; color:${T.diffRemovedText}; text-decoration:line-through;` : `color:${T.mutedStrong};`}`,
+    })) : [];
+
+    const weekFields = WEEK_DAYS_FULL.map((label, i) => ({
+      label,
+      text: s.weekTexts[i],
+      setFn: (e) => this.setWeekText(i, e),
+    }));
+
+    const weekDraftPreview = s.showWeekDraft ? WEEK_DAYS_FULL.map((label, i) => ({ label, text: s.weekDraft[i] })) : [];
+
+    return {
+      rootStyle: `display:flex; width:100%; min-height:100vh; background:${T.bg}; color:${T.text}; --card:${T.card}; --card-border:${T.cardBorder}; --border:${T.border}; --muted:${T.muted}; --muted-strong:${T.mutedStrong}; --divider:${T.divider}; --input-border:${T.inputBorder}; --soft:${T.soft}; --soft2:${T.soft2}; --report-bg:${T.reportBg}; --report-border:${T.reportBorder}; --report-text:${T.reportText}; --pending-badge-bg:${T.pendingBadgeBg}; --pending-badge-text:${T.pendingBadgeText};`,
+      themeIcon: s.theme === 'dark' ? '☀️' : '🌙',
+      toggleTheme: this.toggleTheme,
+      isListView: s.view === 'list',
+      isAthleteView: s.view === 'athlete',
+      isChatView: s.view === 'chat',
+      todayLabel: 'Сегодня, ' + new Date().toLocaleDateString('ru-RU', { day:'numeric', month:'long', weekday:'long' }),
+      isCardsStyle: dashStyle === 'cards',
+      isCompactStyle: dashStyle === 'compact',
+      segCardsStyle,
+      segCompactStyle,
+      setDashCards: this.setDashCards,
+      setDashCompact: this.setDashCompact,
+      athletes: allAthletes,
+      goList: this.goList,
+      goChat: this.goChat,
+      unreadChatCount,
+      navListStyle: `display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px; cursor:pointer; font-size:13.5px; font-weight:600; ${s.view==='list' ? 'background:#1f9d55; color:#fff;' : 'color:#c7d2cf;'}`,
+      navChatStyle: `display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px; cursor:pointer; font-size:13.5px; font-weight:600; ${s.view==='chat' ? 'background:#1f9d55; color:#fff;' : 'color:#c7d2cf;'}`,
+      navSettingsStyle: `display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px; cursor:pointer; font-size:13.5px; font-weight:600; ${s.view==='settings' ? 'background:#1f9d55; color:#fff;' : 'color:#c7d2cf;'}`,
+
+      isSettingsView: s.view === 'settings',
+      goSettings: this.goSettings,
+      aiApiUrl: s.aiApiUrl, setAiApiUrl: this.setAiApiUrl,
+      aiApiKey: s.aiApiKey, setAiApiKey: this.setAiApiKey,
+      aiDetecting: s.aiDetecting, aiNotDetecting: !s.aiDetecting,
+      detectModels: this.detectModels,
+      detectButtonStyle: `text-align:center; background:${T.soft2}; color:${T.mutedStrong}; font-weight:700; font-size:13px; padding:11px; border-radius:10px; cursor:pointer;`,
+      hasModels: s.aiModels.length > 0,
+      aiModelOptions: s.aiModels.map(m => ({
+        name: m,
+        selectFn: () => this.selectAiModel(m),
+        rowStyle: `display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:10px; cursor:pointer; background:${s.aiSelectedModel===m ? T.soft2 : 'transparent'};`,
+        radioStyle: `width:15px;height:15px;border-radius:50%;border:2px solid ${s.aiSelectedModel===m ? '#1f9d55' : T.mutedStrong}; background:${s.aiSelectedModel===m ? '#1f9d55' : 'transparent'};`,
+      })),
+      saveAiSettings: this.saveAiSettings,
+      saveAiButtonStyle: `text-align:center; background:${s.aiSaved ? '#1f9d55' : '#12181a'}; color:#fff; font-weight:700; font-size:13.5px; padding:13px; border-radius:10px; cursor:pointer;`,
+      aiSaved: s.aiSaved, aiNotSaved: !s.aiSaved,
+
+      selected: {
+        initials: initials(selectedRaw.name),
+        name: selectedRaw.name,
+        level: selectedRaw.level,
+        compliance: selectedRaw.compliance,
+        avatarStyleLg: `width:56px;height:56px;border-radius:50%;background:${selectedRaw.color};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;`,
+        week: weekVals,
+      },
+      activeDay,
+      openAddDay: this.openAddDay,
+      openAddWeek: this.openAddWeek,
+      weekRangeLabel: weekRangeLabelFor(s.weekOffset),
+      prevWeek: this.prevWeek,
+      nextWeek: this.nextWeek,
+      datePick: '',
+      setDatePick: this.setDatePick,
+
+      chatList,
+      activeChat,
+      chatDraft: s.chatDraft,
+      setChatDraft: this.setChatDraft,
+      sendChatMessage: this.sendChatMessage,
+
+      showModal: s.showModal,
+      closeModal: this.closeModal,
+      modalTitle: s.modalMode === 'week' ? 'Новая неделя тренировок' : 'Новая тренировка',
+      isModeDay: s.modalMode === 'day',
+      isModeWeek: s.modalMode === 'week',
+      setModeDay: this.setModeDay,
+      setModeWeek: this.setModeWeek,
+      modeDayStyle: `padding:7px 16px; border-radius:8px; font-size:12.5px; font-weight:700; cursor:pointer; ${s.modalMode==='day' ? `background:${T.card}; color:${T.text}; box-shadow:0 1px 2px rgba(0,0,0,0.1);` : `color:${T.mutedStrong};`}`,
+      modeWeekStyle: `padding:7px 16px; border-radius:8px; font-size:12.5px; font-weight:700; cursor:pointer; ${s.modalMode==='week' ? `background:${T.card}; color:${T.text}; box-shadow:0 1px 2px rgba(0,0,0,0.1);` : `color:${T.mutedStrong};`}`,
+
+      formDate: s.formDate, setFormDate: this.setFormDate,
+      formTitle: s.formTitle, setFormTitle: this.setFormTitle,
+      formText: s.formText, setFormText: this.setFormText,
+      saveButtonStyle: `background:#12181a; color:#fff; font-weight:700; font-size:13px; padding:11px 18px; border-radius:10px; cursor:pointer;`,
+      runRewrite: this.runRewrite,
+      isRewriting: s.isRewriting,
+      rewriteButtonStyle: `display:flex; align-items:center; gap:8px; background:${T.soft2}; color:${T.mutedStrong}; font-weight:700; font-size:13px; padding:11px 18px; border-radius:10px; cursor:pointer;`,
+      runCreate: this.runCreate,
+      isCreating: s.isCreating,
+      createButtonStyle: `display:flex; align-items:center; gap:8px; background:${s.isCreating ? '#5b6b68' : '#1f9d55'}; color:#fff; font-weight:700; font-size:13px; padding:11px 18px; border-radius:10px; cursor:pointer;`,
+
+      showRewriteDiff: s.showRewriteDiff,
+      diffLines,
+      acceptRewrite: this.acceptRewrite,
+      rejectRewrite: this.rejectRewrite,
+
+      showCreateConfirm: s.showCreateConfirm,
+      createDraft: s.createDraft,
+      confirmCreate: this.confirmCreate,
+      rejectCreate: this.rejectCreate,
+
+      weekFields,
+      runWeekAi: this.runWeekAi,
+      isWeekAiGenerating: s.isWeekAiGenerating,
+      weekAiButtonStyle: `display:flex; align-items:center; gap:8px; background:${s.isWeekAiGenerating ? '#5b6b68' : '#1f9d55'}; color:#fff; font-weight:700; font-size:12.5px; padding:9px 16px; border-radius:10px; cursor:pointer; white-space:nowrap;`,
+      showWeekDraft: s.showWeekDraft,
+      weekDraftPreview,
+      confirmWeekAi: this.confirmWeekAi,
+      rejectWeekAi: this.rejectWeekAi,
+
+      saveWorkout: this.saveWorkout,
+
+      showInviteModal: s.showInviteModal,
+      closeInviteModal: this.closeInviteModal,
+      inviteEmail: s.inviteEmail,
+      setInviteEmail: this.setInviteEmail,
+      inviteName: s.inviteName,
+      setInviteName: this.setInviteName,
+      inviteSending: s.inviteSending,
+      inviteNotSending: !s.inviteSending,
+      inviteSent: s.inviteSent,
+      inviteNotSent: !s.inviteSent,
+      sendInvite: this.sendInvite,
+      openInvite: this.openInvite,
+      inviteButtonStyle: `display:flex; align-items:center; justify-content:center; gap:8px; background:${s.inviteSending ? '#5b6b68' : '#1f9d55'}; color:#fff; font-weight:700; font-size:13.5px; padding:13px; border-radius:10px; cursor:pointer; width:100%; white-space:nowrap;`,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

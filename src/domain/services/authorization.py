@@ -14,6 +14,10 @@ class Permission(StrEnum):
     VIEW_OWN_ACCOUNT = "view_own_account"
     MANAGE_OWN_COACHING_DATA = "manage_own_coaching_data"
     VIEW_LINKED_ATHLETE_DATA = "view_linked_athlete_data"
+    MANAGE_TRAINING_PLANS = "manage_training_plans"
+    VIEW_OWN_TRAINING_PLAN = "view_own_training_plan"
+    SUBMIT_WORKOUT_REPORT = "submit_workout_report"
+    VIEW_LINKED_ATHLETE_TRAINING = "view_linked_athlete_training"
 
 
 _ROLE_PERMISSIONS: dict[Role, frozenset[Permission]] = {
@@ -27,12 +31,16 @@ _ROLE_PERMISSIONS: dict[Role, frozenset[Permission]] = {
         {
             Permission.VIEW_OWN_ACCOUNT,
             Permission.VIEW_LINKED_ATHLETE_DATA,
+            Permission.MANAGE_TRAINING_PLANS,
+            Permission.VIEW_LINKED_ATHLETE_TRAINING,
         }
     ),
     Role.ATHLETE: frozenset(
         {
             Permission.VIEW_OWN_ACCOUNT,
             Permission.MANAGE_OWN_COACHING_DATA,
+            Permission.VIEW_OWN_TRAINING_PLAN,
+            Permission.SUBMIT_WORKOUT_REPORT,
         }
     ),
 }

@@ -99,3 +99,91 @@ class InvalidInvitationTargetError(DomainError):
 
 class RecordOwnershipError(DomainError):
     """Raised when athlete tries to modify another athlete's record."""
+
+
+class TrainingPlanNotFoundError(DomainError):
+    """Raised when training plan does not exist."""
+
+
+class PlannedWorkoutNotFoundError(DomainError):
+    """Raised when planned workout does not exist."""
+
+
+class WorkoutCompletionReportNotFoundError(DomainError):
+    """Raised when workout completion report does not exist."""
+
+
+class InvalidDifficultyRatingError(DomainError):
+    """Raised when difficulty rating is outside 0–10."""
+
+
+class InvalidMoodRatingError(DomainError):
+    """Raised when mood rating is outside 0–10."""
+
+
+class WorkoutReportAlreadyExistsError(DomainError):
+    """Raised when a report already exists for the planned workout."""
+
+
+class DuplicatePlannedWorkoutError(DomainError):
+    """Raised when a workout already exists for coach, athlete and date."""
+
+
+class TrainingAccessDeniedError(DomainError):
+    """Raised when user has no access to training plan or report data."""
+
+
+class InvalidTrainingPlanError(DomainError):
+    """Raised when training plan payload is invalid."""
+
+
+class InvalidWorkoutStructureError(DomainError):
+    """Raised when workout cycles or exercises are invalid."""
+
+
+class PastWorkoutModificationError(DomainError):
+    """Raised when coach tries to modify a workout in the past."""
+
+
+class TrainingTextParsingNotAvailableError(DomainError):
+    """Raised when text parsing is requested but parser is not configured."""
+
+
+class AgentAssistantNotAvailableError(DomainError):
+    """Raised when AI agent dialog is requested but not implemented yet."""
+
+
+class AgentSessionNotFoundError(DomainError):
+    """Raised when agent session does not exist."""
+
+
+class AgentSessionExpiredError(DomainError):
+    """Raised when agent session exceeded inactivity expiry."""
+
+
+class AgentSessionMessageLimitError(DomainError):
+    """Raised when agent session reached the message limit."""
+
+
+class AgentSessionNotActiveError(DomainError):
+    """Raised when operation requires an active agent session."""
+
+
+class AIServiceUnavailableError(DomainError):
+    """Raised when AI provider is not configured or unreachable."""
+
+
+class AIResponseInvalidError(DomainError):
+    """Raised when AI provider returned an invalid response."""
+
+
+class DuplicateActiveReportAgentSessionError(DomainError):
+    """Raised when an active report agent session already exists for the workout."""
+
+
+class ConversationNotFoundError(DomainError):
+    """Raised when conversation does not exist."""
+
+
+class InvalidConversationMessageContentError(DomainError):
+    """Raised when conversation message content is invalid."""

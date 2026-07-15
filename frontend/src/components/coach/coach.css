@@ -1,0 +1,748 @@
+.coach-list-screen {
+    display: grid;
+    gap: var(--space-6);
+}
+
+.coach-list-screen__header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.coach-list-screen__date {
+    margin: 0 0 var(--space-1);
+    font-size: 13px;
+    color: #6b7876;
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.coach-list-screen__title {
+    margin: 0;
+    font-size: 28px;
+    font-weight: var(--font-weight-extrabold);
+    letter-spacing: -0.5px;
+}
+
+.coach-list-screen__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.coach-list-screen__empty {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: start;
+}
+
+.coach-athlete-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-4);
+}
+
+.coach-athlete-card {
+    position: relative;
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    display: grid;
+    gap: var(--space-3);
+}
+
+.coach-athlete-card--clickable {
+    cursor: pointer;
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.coach-athlete-card--clickable:hover {
+    box-shadow: var(--shadow-card);
+    transform: translateY(-1px);
+}
+
+.coach-athlete-card__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.coach-athlete-card__name {
+    margin: 0;
+    font-size: 15px;
+    font-weight: var(--font-weight-bold);
+}
+
+.coach-athlete-card__level {
+    margin: 2px 0 0;
+    font-size: 12px;
+    color: var(--color-text-muted);
+}
+
+.coach-athlete-card__today,
+.coach-athlete-card__pending {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    background: var(--color-bg-page);
+    border-radius: 10px;
+    padding: 10px 12px;
+}
+
+.coach-athlete-card__today-type,
+.coach-athlete-card__pending-email {
+    margin: 0;
+    font-size: 13px;
+    font-weight: var(--font-weight-semibold);
+}
+
+.coach-athlete-card__pending-email {
+    font-size: 12px;
+    color: var(--color-text-muted);
+}
+
+.coach-athlete-card__compliance,
+.coach-athlete-card__meta {
+    margin: 0;
+    font-size: 11.5px;
+    color: var(--color-text-muted);
+}
+
+.coach-athlete-table {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.coach-athlete-table__head {
+    display: grid;
+    grid-template-columns: 1.6fr 1.4fr 1fr 32px;
+    gap: var(--space-3);
+    padding: 12px 20px;
+    font-size: 11px;
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--color-text-muted);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.coach-athlete-row {
+    display: grid;
+    grid-template-columns: 1.6fr 1.4fr 1fr 32px;
+    gap: var(--space-3);
+    align-items: center;
+    width: 100%;
+    padding: 14px 20px;
+    border: none;
+    border-bottom: 1px solid var(--color-border);
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+}
+
+.coach-athlete-row:last-child {
+    border-bottom: none;
+}
+
+.coach-athlete-row:hover:not(:disabled) {
+    background: var(--color-bg-page);
+}
+
+.coach-athlete-row:disabled {
+    cursor: default;
+}
+
+.coach-athlete-row__athlete {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.coach-athlete-row__name {
+    margin: 0;
+    font-size: 14px;
+    font-weight: var(--font-weight-bold);
+}
+
+.coach-athlete-row__meta {
+    margin: 2px 0 0;
+    font-size: 12px;
+    color: var(--color-text-muted);
+}
+
+.coach-athlete-row__today {
+    font-size: 13px;
+    color: var(--color-text-body);
+}
+
+.coach-athlete-row__chevron {
+    color: var(--color-text-muted);
+    font-size: 18px;
+}
+
+.coach-invite-form,
+.coach-invite-success {
+    display: grid;
+    gap: var(--space-3);
+}
+
+.coach-invite-success__title {
+    margin: 0;
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-extrabold);
+}
+
+.coach-invite-success__text {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    line-height: 1.5;
+}
+
+.coach-chat-screen {
+    display: grid;
+    gap: var(--space-4);
+}
+
+.coach-add-workout-modal {
+    display: grid;
+    gap: var(--space-4);
+}
+
+.coach-add-workout-modal__label {
+    margin: 0;
+    font-size: 12px;
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+}
+
+.coach-add-workout-modal__textarea {
+    width: 100%;
+    min-height: 80px;
+    border: 1.5px solid #e0e5dd;
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 13.5px;
+    resize: vertical;
+    outline: none;
+}
+
+.coach-add-workout-modal__days {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.coach-add-workout-modal__day-pill {
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    padding: 6px 12px;
+    background: var(--color-white);
+    font-size: 12px;
+    font-weight: var(--font-weight-bold);
+    cursor: pointer;
+}
+
+.coach-add-workout-modal__day-pill--active {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+    color: var(--color-white);
+}
+
+
+.coach-page-content {
+    display: grid;
+    gap: var(--space-6);
+}
+
+.coach-page-content .section {
+    margin-bottom: 0;
+}
+
+.coach-athlete-screen {
+    display: grid;
+    gap: var(--space-5);
+}
+
+.coach-athlete-screen__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--color-text-body);
+    font-size: 13px;
+    font-weight: var(--font-weight-semibold);
+    text-decoration: none;
+}
+
+.coach-athlete-screen__back:hover {
+    color: var(--color-ink);
+}
+
+.coach-athlete-screen__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.coach-athlete-screen__identity {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.coach-athlete-screen__name {
+    margin: 0;
+    font-size: 22px;
+    font-weight: var(--font-weight-extrabold);
+}
+
+.coach-athlete-screen__meta {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: var(--color-text-muted);
+}
+
+.coach-athlete-screen__actions {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.coach-week-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: var(--space-2);
+}
+
+.coach-week-grid__day {
+    display: grid;
+    gap: 6px;
+    justify-items: center;
+    text-align: center;
+    padding: var(--space-3) var(--space-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-white);
+    cursor: pointer;
+}
+
+.coach-week-grid__day--active {
+    border-color: var(--color-ink);
+    box-shadow: inset 0 0 0 1px var(--color-ink);
+}
+
+.coach-week-grid__label {
+    font-size: 11px;
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    letter-spacing: 0.3px;
+}
+
+.coach-week-grid__type {
+    font-size: 13px;
+    font-weight: var(--font-weight-bold);
+    line-height: 1.3;
+    min-height: 2.6em;
+}
+
+.coach-week-grid__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.coach-week-grid__status {
+    font-size: 11px;
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-body);
+}
+
+.coach-day-detail {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+}
+
+.coach-day-detail__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.coach-day-detail__title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: var(--font-weight-extrabold);
+}
+
+.coach-day-detail__blocks {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: var(--space-4);
+}
+
+.coach-day-detail__block {
+    background: var(--color-bg-page);
+    border-radius: 10px;
+    padding: 12px;
+}
+
+.coach-day-detail__block-label {
+    margin: 0;
+    font-size: 11px;
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+}
+
+.coach-day-detail__block-text {
+    margin: 4px 0 0;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.coach-day-detail__metrics {
+    display: flex;
+    gap: 20px;
+    font-size: 13px;
+    color: var(--color-text-body);
+    margin-bottom: var(--space-4);
+}
+
+.coach-day-detail__empty,
+.coach-day-detail__no-report {
+    margin: 0 0 var(--space-4);
+    font-size: 13px;
+    color: var(--color-text-muted);
+}
+
+.coach-day-detail__divider {
+    border: none;
+    border-top: 1px solid #eef0ec;
+    margin: var(--space-4) 0;
+}
+
+.coach-day-detail__report-label,
+.coach-section-title {
+    margin: 0 0 var(--space-2);
+    font-size: 12px;
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+}
+
+.coach-day-detail__report-card {
+    background: var(--color-success-bg);
+    border: 1px solid #cdeeda;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 13px;
+    line-height: 1.55;
+    color: #1a4d2e;
+}
+
+.coach-day-detail__report-card p {
+    margin: 0;
+}
+
+.coach-day-detail__report-meta {
+    display: flex;
+    gap: 18px;
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--color-text-body);
+}
+
+.coach-day-detail__report-meta a {
+    color: var(--color-accent-blue);
+}
+
+.coach-athlete-skeleton {
+    display: grid;
+    gap: var(--space-4);
+}
+
+.coach-athlete-skeleton__header,
+.coach-athlete-skeleton__grid,
+.coach-athlete-skeleton__detail {
+    border-radius: var(--radius-lg);
+    background: linear-gradient(90deg, #eef0ec 25%, #f6f7f5 50%, #eef0ec 75%);
+    background-size: 200% 100%;
+    animation: coach-skeleton-shimmer 1.2s infinite;
+}
+
+.coach-athlete-skeleton__header {
+    height: 72px;
+}
+
+.coach-athlete-skeleton__grid {
+    height: 120px;
+}
+
+.coach-athlete-skeleton__detail {
+    height: 220px;
+}
+
+@keyframes coach-skeleton-shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.coach-add-workout-modal__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+}
+
+.coach-add-workout-modal__field {
+    display: grid;
+    gap: 6px;
+}
+
+.coach-add-workout-modal__label {
+    font-size: 11px;
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+}
+
+.coach-add-workout-modal__input,
+.coach-add-workout-modal__textarea {
+    width: 100%;
+    border: 1.5px solid var(--color-border-input);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 13.5px;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.coach-add-workout-modal__textarea {
+    min-height: 220px;
+    line-height: 1.6;
+}
+
+.coach-add-workout-modal__textarea--compact {
+    min-height: 64px;
+}
+
+.coach-add-workout-modal__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.coach-add-workout-modal__preview {
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-divider);
+}
+
+.coach-add-workout-modal__preview-label {
+    margin: 0 0 var(--space-2);
+    font-size: 12px;
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    color: var(--color-accent-green);
+}
+
+.coach-add-workout-modal__diff {
+    background: var(--color-bg-page);
+    border-radius: 12px;
+    padding: 14px 16px;
+    max-height: 260px;
+    overflow-y: auto;
+}
+
+.coach-add-workout-modal__diff-line {
+    font-size: 12.5px;
+    line-height: 1.6;
+    font-family: ui-monospace, monospace;
+    white-space: pre-wrap;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.coach-add-workout-modal__diff-line--added {
+    background: var(--color-success-bg);
+    color: #1a4d2e;
+}
+
+.coach-add-workout-modal__diff-line--removed {
+    background: var(--color-error-bg);
+    color: #8a2530;
+    text-decoration: line-through;
+}
+
+.coach-add-workout-modal__draft {
+    margin: 0;
+    white-space: pre-wrap;
+    background: var(--color-success-bg);
+    border: 1px solid #cdeeda;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: #1a4d2e;
+    max-height: 260px;
+    overflow-y: auto;
+}
+
+.coach-add-workout-modal__week-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+}
+
+.coach-add-workout-modal__week-fields {
+    display: grid;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+}
+
+.coach-add-workout-modal__week-day {
+    display: grid;
+    gap: 5px;
+}
+
+.coach-add-workout-modal__meta {
+    margin: 0;
+    font-size: 13px;
+    color: var(--color-text-muted);
+}
+
+.coach-list-screen__invite-btn-short,
+.coach-athlete-screen__week-btn-short {
+    display: none;
+}
+
+.coach-list-screen__invite-btn-full,
+.coach-athlete-screen__week-btn-full {
+    display: inline;
+}
+
+@media (max-width: 1023px) {
+    .coach-list-screen__header {
+        align-items: flex-start;
+        margin-bottom: var(--space-3);
+    }
+
+    .coach-list-screen__date {
+        font-size: 10.5px;
+    }
+
+    .coach-list-screen__title {
+        font-size: 19px;
+        letter-spacing: -0.4px;
+    }
+
+    .coach-list-screen__actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .coach-list-screen__invite-btn-short {
+        display: inline;
+    }
+
+    .coach-list-screen__invite-btn-full {
+        display: none;
+    }
+
+    .coach-athlete-screen__week-btn-short {
+        display: inline;
+    }
+
+    .coach-athlete-screen__week-btn-full {
+        display: none;
+    }
+
+    .coach-athlete-screen__actions {
+        width: 100%;
+    }
+
+    .coach-athlete-screen__actions .ui-button {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .coach-week-grid {
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        margin-bottom: var(--space-4);
+    }
+
+    .coach-week-grid__day {
+        flex: 0 0 72px;
+        min-width: 72px;
+        padding: 10px 8px;
+    }
+
+    .coach-week-grid__type {
+        font-size: 11px;
+        min-height: auto;
+        margin: 4px 0 8px;
+    }
+
+    .coach-week-grid__status {
+        display: none;
+    }
+
+    .coach-chat-screen--mobile-list .chat-split__list {
+        width: 100%;
+        border-right: none;
+    }
+
+    .coach-chat-screen--mobile-conversation .chat-split__conversation {
+        padding: 0;
+        min-height: calc(100vh - 120px);
+    }
+
+    .coach-athlete-screen__name {
+        font-size: 17px;
+    }
+}
+
+@media (max-width: 900px) {
+    .coach-week-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .coach-day-detail__blocks {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (min-width: 1024px) {
+    .coach-week-grid {
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 10px;
+    }
+}
+

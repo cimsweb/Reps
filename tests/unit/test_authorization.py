@@ -37,6 +37,12 @@ def _build_user(role: Role) -> User:
         (Role.ATHLETE, Permission.MANAGE_OWN_COACHING_DATA, True),
         (Role.COACH, Permission.MANAGE_OWN_COACHING_DATA, False),
         (Role.ATHLETE, Permission.VIEW_LINKED_ATHLETE_DATA, False),
+        (Role.COACH, Permission.MANAGE_TRAINING_PLANS, True),
+        (Role.COACH, Permission.VIEW_LINKED_ATHLETE_TRAINING, True),
+        (Role.ATHLETE, Permission.VIEW_OWN_TRAINING_PLAN, True),
+        (Role.ATHLETE, Permission.SUBMIT_WORKOUT_REPORT, True),
+        (Role.ATHLETE, Permission.MANAGE_TRAINING_PLANS, False),
+        (Role.COACH, Permission.SUBMIT_WORKOUT_REPORT, False),
     ],
 )
 def test_has_permission(role: Role, permission: Permission, expected: bool) -> None:

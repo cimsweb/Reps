@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from application.security.authorization_guard import AuthorizationGuard
 from application.security.coaching_access_guard import CoachingAccessGuard
+from application.security.training_access_guard import TrainingAccessGuard
 from application.use_cases.authenticate_session import AuthenticateSessionUseCase
 from infrastructure.db.coaching_repositories import SqlAlchemyCoachAthleteLinkRepository
 from infrastructure.db.engine import create_db_engine
@@ -62,6 +63,13 @@ def get_coaching_access_guard(db: DbSession) -> CoachingAccessGuard:
 
 
 CoachingAccessGuardDep = Annotated[CoachingAccessGuard, Depends(get_coaching_access_guard)]
+
+
+def get_training_access_guard(db: DbSession) -> TrainingAccessGuard:
+    return TrainingAccessGuard(SqlAlchemyCoachAthleteLinkRepository(db))
+
+
+TrainingAccessGuardDep = Annotated[TrainingAccessGuard, Depends(get_training_access_guard)]
 
 
 def get_bearer_token(authorization: Annotated[str | None, Header()] = None) -> str:

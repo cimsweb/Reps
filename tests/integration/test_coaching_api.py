@@ -116,13 +116,10 @@ def test_coaching_read_flow(client: TestClient) -> None:
     feedback_response = client.post(
         "/api/v1/athlete/feedback",
         headers=athlete_headers,
-        json={
-            "text": "Legs felt heavy.",
-            "garmin_url": "https://connect.garmin.com/modern/activity/12345",
-        },
+        json={"text": "Legs felt heavy."},
     )
     assert feedback_response.status_code == 201
-    assert "garmin.com" in feedback_response.json()["garmin_url"]
+    assert feedback_response.json()["text"] == "Legs felt heavy."
 
     coach_feedback = client.get(
         f"/api/v1/coach/athletes/{athlete_id}/feedback",

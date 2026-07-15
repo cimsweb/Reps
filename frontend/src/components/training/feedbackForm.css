@@ -1,0 +1,150 @@
+.feedback-form {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: 18px;
+    display: grid;
+    gap: var(--space-3);
+}
+
+.feedback-form__title {
+    margin: 0;
+    font-size: 13px;
+    font-weight: var(--font-weight-extrabold);
+}
+
+.feedback-form__subtitle {
+    margin: -8px 0 0;
+    font-size: 12px;
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-semibold);
+}
+
+.feedback-form__label {
+    margin: 0;
+    font-size: 11px;
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+}
+
+.feedback-form__label--question {
+    color: var(--color-accent-orange);
+}
+
+.feedback-form__textarea,
+.feedback-form__input {
+    width: 100%;
+    border: 1.5px solid #e0e5dd;
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 13px;
+    outline: none;
+    resize: vertical;
+}
+
+.feedback-form__textarea--polished {
+    border-color: #cdeeda;
+    background: var(--color-success-bg);
+    line-height: 1.5;
+}
+
+.feedback-form__textarea--question {
+    border-color: #f5d9b8;
+}
+
+.feedback-form__ai-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    background: var(--color-ink);
+    color: var(--color-white);
+    font-weight: var(--font-weight-bold);
+    font-size: 13.5px;
+    text-decoration: none;
+}
+
+.feedback-form__ai-button:hover {
+    opacity: 0.92;
+}
+
+.feedback-form__divider {
+    border: none;
+    border-top: 1px solid #eef0ec;
+    margin: 0;
+}
+
+.feedback-form__rpe-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.feedback-form__rpe-value {
+    font-size: 12px;
+    font-weight: var(--font-weight-extrabold);
+}
+
+.feedback-form__rpe-row {
+    display: flex;
+    gap: 4px;
+}
+
+.feedback-form__rpe-pill {
+    flex: 1;
+    border: none;
+    border-radius: 6px;
+    padding: 5px 0;
+    font-size: 11px;
+    font-weight: var(--font-weight-bold);
+    background: #f0f2ee;
+    color: var(--color-text-body);
+    cursor: pointer;
+}
+
+.feedback-form__rpe-pill--active {
+    background: var(--color-ink);
+    color: var(--color-white);
+}
+
+.feedback-form__question-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: none;
+    background: transparent;
+    font-size: 12.5px;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-body);
+    cursor: pointer;
+    padding: 0;
+}
+
+.feedback-form__question {
+    display: grid;
+    gap: var(--space-2);
+}
+
+.feedback-form--submitted {
+    background: var(--color-success-bg);
+    border-color: #cdeeda;
+    color: #1a4d2e;
+}
+
+.feedback-form__success-label {
+    margin: 0;
+    font-size: 11px;
+    font-weight: var(--font-weight-extrabold);
+    text-transform: uppercase;
+    color: var(--color-accent-green);
+}
+
+.feedback-form__success-text {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.55;
+}

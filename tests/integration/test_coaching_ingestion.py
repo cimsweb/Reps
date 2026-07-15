@@ -18,7 +18,7 @@ from application.use_cases.send_invitation import SendInvitationUseCase
 from application.use_cases.submit_workout_feedback import SubmitWorkoutFeedbackUseCase
 from domain.entities.invitation_status import InvitationStatus
 from domain.entities.role import Role
-from domain.exceptions import DuplicateInvitationError, InvalidGarminUrlError
+from domain.exceptions import DuplicateInvitationError
 from infrastructure.db.coaching_repositories import (
     SqlAlchemyAthleteProfileRepository,
     SqlAlchemyCoachAthleteLinkRepository,
@@ -127,13 +127,12 @@ def test_coaching_ingestion_flow_persists_to_database() -> None:
             athlete.id,
             Role.ATHLETE,
             "Strong session",
-            "https://connect.garmin.com/modern/activity/999",
         )
         db_session.commit()
 
         feedback_row = db_session.get(WorkoutFeedbackRecord, feedback.id.value)
         assert feedback_row is not None
-        assert feedback_row.garmin_url is not None
+        assert feedback_row.text == "Strong session"
 
 
 @pytest.mark.integration
@@ -168,33 +167,6 @@ def test_send_invitation_rejects_duplicate_in_database() -> None:
 
         with pytest.raises(DuplicateInvitationError):
             send_use_case.execute(coach.id, Role.COACH, athlete_email)
-
-
-@pytest.mark.integration
-def test_submit_feedback_rejects_invalid_garmin_url_in_database() -> None:
-    if not database_is_available():
-        pytest.skip("PostgreSQL is not available")
-
-    athlete_email = f"athlete-{uuid4()}@example.com"
-    engine = create_engine(get_database_url())
-    hasher = ScryptPasswordHasher()
-
-    with OrmSession(engine) as db_session:
-        user_repository = SqlAlchemyUserRepository(db_session)
-        athlete = RegisterUserUseCase(user_repository, hasher).execute(
-            athlete_email,
-            "secure1A",
-            Role.ATHLETE,
-        )
-        db_session.commit()
-
-        with pytest.raises(InvalidGarminUrlError):
-            SubmitWorkoutFeedbackUseCase(SqlAlchemyWorkoutFeedbackRepository(db_session)).execute(
-                athlete.id,
-                Role.ATHLETE,
-                "Feedback text",
-                "https://example.com/not-garmin",
-            )
 
 
 @pytest.mark.integration

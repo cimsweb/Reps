@@ -39,3 +39,41 @@ export function fromDateTimeLocalValue(value) {
   }
   return new Date(value).toISOString();
 }
+
+export function formatWorkoutType(value) {
+  const labels = {
+    run: "Бег",
+    bike: "Велосипед",
+    gym: "Зал",
+  };
+  return labels[value] ?? value;
+}
+
+export function formatDate(value) {
+  if (!value) {
+    return "—";
+  }
+  return new Date(`${value}T00:00:00`).toLocaleDateString();
+}
+
+export function toDateInputValue(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+export function addDaysToDateString(dateString, days) {
+  const date = new Date(`${dateString}T00:00:00`);
+  date.setDate(date.getDate() + days);
+  return toDateInputValue(date);
+}
+
+export function formatPaceSecondsPerKm(seconds) {
+  if (!seconds) {
+    return null;
+  }
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${String(secs).padStart(2, "0")}/км`;
+}

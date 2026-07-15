@@ -23,9 +23,7 @@ class GarminReportUrl:
 
         parsed = urlparse(normalized)
         if parsed.scheme != "https" or not parsed.netloc:
-            raise InvalidGarminUrlError("Garmin report URL must be a valid HTTPS URL")
-        if "garmin.com" not in parsed.netloc:
-            raise InvalidGarminUrlError("Garmin report URL must point to garmin.com")
+            raise InvalidGarminUrlError("Activity URL must be a valid HTTPS URL")
 
         object.__setattr__(self, "value", normalized)
 

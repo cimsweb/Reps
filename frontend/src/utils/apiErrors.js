@@ -6,3 +6,7 @@ export function getErrorMessage(error, fallback = "Произошла ошибк
   }
   return fallback;
 }
+
+export function isAiUnavailableError(error) {
+  return error instanceof ApiError && (error.status === 503 || error.code === "ai_unavailable");
+}

@@ -289,7 +289,6 @@ def test_list_workout_feedback_for_linked_coach() -> None:
             id=WorkoutFeedbackId(uuid4()),
             athlete_id=athlete_id,
             text=FeedbackText("Good session").value,
-            garmin_url=None,
             created_at=datetime.now(UTC),
         )
     )

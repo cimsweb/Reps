@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    @keyframes ap-dot { 0%,80%,100%{ transform: scale(0.6); opacity:.4 } 40%{ transform: scale(1); opacity:1 } }
+    @keyframes ap-pulse { 0%,100%{ box-shadow: 0 0 0 0 rgba(255,140,26,0.35) } 50%{ box-shadow: 0 0 0 6px rgba(255,140,26,0) } }
+    * { box-sizing: border-box; font-family: 'Manrope', sans-serif; }
+    body { margin:0; }
+    ::-webkit-scrollbar { display:none; }
+  </style>
+</helmet>
+
+<div style="{{ pageStyle }}">
+  <div style="width:393px; max-width:100%; background:#12181a; border-radius:44px; padding:12px; box-shadow:0 30px 60px rgba(0,0,0,0.25);">
+    <div style="background:var(--bg); color:var(--text); border-radius:34px; overflow:hidden; height:830px; display:flex; flex-direction:column; position:relative;">
+
+      <!-- status bar -->
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:16px 24px 6px; font-size:13px; font-weight:700; color:var(--text); flex-shrink:0;">
+        <div>9:41</div>
+        <div style="width:100px; height:24px; background:#12181a; border-radius:14px; position:absolute; left:50%; top:8px; transform:translateX(-50%);"></div>
+        <div onClick="{{ toggleTheme }}" style="cursor:pointer;">{{ themeIcon }}</div>
+      </div>
+
+      <!-- SCREEN CONTENT -->
+      <div style="flex:1; overflow-y:auto; padding:8px 20px 20px;">
+
+        <sc-if value="{{ isToday }}" hint-placeholder-val="{{ true }}">
+          <div>
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+              <div>
+                <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); letter-spacing:0.3px;">{{ todayDateLabel }}</div>
+                <div style="font-size:21px; font-weight:800; letter-spacing:-0.4px;">Привет, Анна 👋</div>
+              </div>
+              <div onClick="{{ toggleHomeStyle }}" style="font-size:10.5px; font-weight:700; color:var(--muted-strong); background:var(--soft2); padding:6px 10px; border-radius:8px; cursor:pointer; text-align:center; line-height:1.3;">Вид:<br/>{{ homeStyleLabel }}</div>
+            </div>
+
+            <!-- week strip -->
+            <div style="display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; margin-bottom:16px;">
+              <sc-for list="{{ weekStrip }}" as="d" hint-placeholder-count="7">
+                <div onClick="{{ d.selectFn }}" style="{{ d.chipStyle }}">
+                  <div style="font-size:10px; font-weight:700; opacity:0.7;">{{ d.label }}</div>
+                  <div style="{{ d.dotStyle }}"></div>
+                </div>
+              </sc-for>
+            </div>
+
+            <sc-if value="{{ isFullStyle }}" hint-placeholder-val="{{ true }}">
+              <div>
+                <!-- task card -->
+                <div style="background:var(--card); border-radius:20px; padding:18px; margin-bottom:16px; border:1px solid var(--card-border);">
+                  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:2px;">
+                    <div style="font-size:16px; font-weight:800;">{{ activeDay.dayFull }}{{ activeDay.titleSuffix }}</div>
+                    <div style="{{ activeDay.statusChipStyle }}">{{ activeDay.statusLabel }}</div>
+                  </div>
+                  <div style="font-size:12px; color:var(--muted); font-weight:600; margin-bottom:14px;">{{ activeDay.date }}</div>
+                  <sc-if value="{{ activeDay.hasPlan }}" hint-placeholder-val="{{ true }}">
+                    <div style="display:flex; flex-direction:column; gap:2px;">
+                      <sc-for list="{{ activeDay.lines }}" as="ln" hint-placeholder-count="6">
+                        <sc-if value="{{ ln.blank }}" hint-placeholder-val="{{ false }}">
+                          <div style="height:10px;"></div>
+                        </sc-if>
+                        <sc-if value="{{ ln.bullet }}" hint-placeholder-val="{{ false }}">
+                          <div style="display:flex; gap:8px; font-size:13.5px; line-height:1.6;">
+                            <span style="color:#1f9d55; font-weight:700;">•</span>
+                            <span>{{ ln.text }}</span>
+                          </div>
+                        </sc-if>
+                        <sc-if value="{{ ln.plain }}" hint-placeholder-val="{{ true }}">
+                          <div style="font-size:13.5px; line-height:1.6;">{{ ln.text }}</div>
+                        </sc-if>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ activeDay.hasNoPlan }}" hint-placeholder-val="{{ false }}">
+                    <div style="font-size:13px; color:var(--muted);">{{ activeDay.emptyLabel }}</div>
+                  </sc-if>
+                </div>
+
+                <sc-if value="{{ activeDay.canReport }}" hint-placeholder-val="{{ true }}">
+                  <dc-import name="FeedbackForm" day-label="{{ activeDay.dayFull }}" workout-type="{{ activeDay.title }}" theme="{{ themeName }}" hint-size="100%,420px"></dc-import>
+                </sc-if>
+                <sc-if value="{{ activeDay.showSubmittedReport }}" hint-placeholder-val="{{ false }}">
+                  <div style="background:var(--report-bg); border:1px solid var(--report-border); border-radius:16px; padding:16px; font-size:13px; line-height:1.55; color:var(--report-text);">
+                    <div style="font-size:11px; font-weight:800; text-transform:uppercase; color:#1f9d55; margin-bottom:8px;">Отчёт отправлен</div>
+                    {{ activeDay.reportText }}
+                    <div style="display:flex; gap:16px; margin-top:10px; font-size:12px; color:var(--muted-strong);">
+                      <div>RPE: <b>{{ activeDay.reportRpe }}</b>/10</div>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isTabsStyle }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <div style="display:flex; background:var(--soft2); border-radius:10px; padding:3px; margin-bottom:14px;">
+                  <div onClick="{{ setSubTask }}" style="{{ subTaskStyle }}">Задание</div>
+                  <div onClick="{{ setSubReport }}" style="{{ subReportStyle }}">Отчёт</div>
+                </div>
+
+                <sc-if value="{{ isSubTask }}" hint-placeholder-val="{{ true }}">
+                  <div style="background:var(--card); border-radius:20px; padding:18px; border:1px solid var(--card-border);">
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:2px;">
+                      <div style="font-size:16px; font-weight:800;">{{ activeDay.dayFull }}{{ activeDay.titleSuffix }}</div>
+                      <div style="{{ activeDay.statusChipStyle }}">{{ activeDay.statusLabel }}</div>
+                    </div>
+                    <div style="font-size:12px; color:var(--muted); font-weight:600; margin-bottom:14px;">{{ activeDay.date }}</div>
+                    <sc-if value="{{ activeDay.hasPlan }}" hint-placeholder-val="{{ true }}">
+                      <div style="display:flex; flex-direction:column; gap:2px;">
+                        <sc-for list="{{ activeDay.lines }}" as="ln" hint-placeholder-count="6">
+                          <sc-if value="{{ ln.blank }}" hint-placeholder-val="{{ false }}">
+                            <div style="height:10px;"></div>
+                          </sc-if>
+                          <sc-if value="{{ ln.bullet }}" hint-placeholder-val="{{ false }}">
+                            <div style="display:flex; gap:8px; font-size:13.5px; line-height:1.6;">
+                              <span style="color:#1f9d55; font-weight:700;">•</span>
+                              <span>{{ ln.text }}</span>
+                            </div>
+                          </sc-if>
+                          <sc-if value="{{ ln.plain }}" hint-placeholder-val="{{ true }}">
+                            <div style="font-size:13.5px; line-height:1.6;">{{ ln.text }}</div>
+                          </sc-if>
+                        </sc-for>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ activeDay.hasNoPlan }}" hint-placeholder-val="{{ false }}">
+                      <div style="font-size:13px; color:var(--muted);">{{ activeDay.emptyLabel }}</div>
+                    </sc-if>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ isSubReport }}" hint-placeholder-val="{{ false }}">
+                  <sc-if value="{{ activeDay.canReport }}" hint-placeholder-val="{{ true }}">
+                    <dc-import name="FeedbackForm" day-label="{{ activeDay.dayFull }}" workout-type="{{ activeDay.title }}" theme="{{ themeName }}" hint-size="100%,420px"></dc-import>
+                  </sc-if>
+                  <sc-if value="{{ activeDay.showSubmittedReport }}" hint-placeholder-val="{{ false }}">
+                    <div style="background:var(--report-bg); border:1px solid var(--report-border); border-radius:16px; padding:16px; font-size:13px; line-height:1.55; color:var(--report-text);">
+                      <div style="font-size:11px; font-weight:800; text-transform:uppercase; color:#1f9d55; margin-bottom:8px;">Отчёт отправлен</div>
+                      {{ activeDay.reportText }}
+                      <div style="display:flex; gap:16px; margin-top:10px; font-size:12px; color:var(--muted-strong);">
+                        <div>RPE: <b>{{ activeDay.reportRpe }}</b>/10</div>
+                      </div>
+                    </div>
+                  </sc-if>
+                </sc-if>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isWeek }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <div style="font-size:21px; font-weight:800; margin-bottom:4px;">Эта неделя</div>
+            <div style="font-size:12.5px; color:var(--muted); margin-bottom:16px;">Соблюдение плана: 92%</div>
+
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; gap:8px;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div onClick="{{ prevWeek }}" style="width:28px;height:28px;border-radius:8px;background:var(--soft2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;font-weight:700;">‹</div>
+                <div style="font-size:11.5px; font-weight:700; color:var(--muted-strong); white-space:nowrap;">{{ weekRangeLabel }}</div>
+                <div onClick="{{ nextWeek }}" style="width:28px;height:28px;border-radius:8px;background:var(--soft2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;font-weight:700;">›</div>
+              </div>
+              <input type="date" value="{{ datePick }}" onChange="{{ setDatePick }}" style="border:1.5px solid var(--input-border); border-radius:8px; padding:5px 7px; font-size:11px; background:var(--card); color:var(--text); outline:none; width:120px;" />
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <sc-for list="{{ weekList }}" as="d" hint-placeholder-count="7">
+                <div style="background:var(--card); border:1px solid var(--card-border); border-radius:14px; padding:14px 16px; display:flex; align-items:center; justify-content:space-between;">
+                  <div>
+                    <div style="font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase;">{{ d.dayFull }}{{ d.titleSuffix }}</div>
+                    <div style="font-size:12px; color:var(--muted); font-weight:600; margin-top:2px;">{{ d.date }}</div>
+                  </div>
+                  <div style="{{ d.statusChipStyle }}">{{ d.statusLabel }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isProgress }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <div style="font-size:21px; font-weight:800; margin-bottom:16px;">Прогресс</div>
+
+            <div style="background:var(--card); border:1px solid var(--card-border); border-radius:16px; padding:16px; margin-bottom:14px;">
+              <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:8px;">
+                <div style="font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase;">Дистанция с начала месяца</div>
+                <div style="font-size:15px; font-weight:800;">{{ monthTotalKm }} км</div>
+              </div>
+              <svg viewBox="0 0 300 90" style="width:100%; height:90px; display:block;">
+                <path d="{{ monthAreaPath }}" fill="var(--chart-area)"></path>
+                <path d="{{ monthLinePath }}" fill="none" stroke="#1f9d55" stroke-width="2.5"></path>
+              </svg>
+            </div>
+
+            <div style="background:var(--card); border:1px solid var(--card-border); border-radius:16px; padding:16px; margin-bottom:18px;">
+              <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:10px;">
+                <div style="font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase;">Дистанция с начала года</div>
+                <div style="font-size:15px; font-weight:800;">{{ yearTotalKm }} км</div>
+              </div>
+              <div style="display:flex; align-items:flex-end; gap:6px; height:80px;">
+                <sc-for list="{{ yearBars }}" as="b" hint-placeholder-count="7">
+                  <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; gap:4px;">
+                    <div style="{{ b.barStyle }}"></div>
+                    <div style="font-size:9.5px; font-weight:700; color:var(--muted);">{{ b.label }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; margin-bottom:10px;">Личные рекорды</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <sc-for list="{{ records }}" as="r" hint-placeholder-count="4">
+                <div style="background:var(--card); border:1px solid var(--card-border); border-radius:14px; padding:14px;">
+                  <div style="font-size:20px; margin-bottom:6px;">{{ r.icon }}</div>
+                  <div style="font-size:17px; font-weight:800;">{{ r.value }}</div>
+                  <div style="font-size:11.5px; color:var(--muted); font-weight:600; margin-top:2px;">{{ r.label }}</div>
+                  <div style="font-size:10.5px; color:#1f9d55; font-weight:700; margin-top:6px;">{{ r.date }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <div style="font-size:21px; font-weight:800; margin-bottom:4px;">Настройки ИИ</div>
+            <div style="font-size:12px; color:var(--muted); margin-bottom:16px;">Подключите провайдера LLM.</div>
+
+            <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:6px;">URL API провайдера</div>
+            <input value="{{ aiApiUrl }}" onChange="{{ setAiApiUrl }}" placeholder="https://api.openai.com/v1" style="width:100%; border:1.5px solid var(--input-border); border-radius:10px; padding:10px 12px; font-size:13px; outline:none; margin-bottom:12px; background:var(--card); color:var(--text);" />
+
+            <div onClick="{{ detectModels }}" style="{{ detectButtonStyle }}">
+              <sc-if value="{{ aiDetecting }}" hint-placeholder-val="{{ false }}"><span>Определяем модели…</span></sc-if>
+              <sc-if value="{{ aiNotDetecting }}" hint-placeholder-val="{{ true }}"><span>Определить доступные модели</span></sc-if>
+            </div>
+
+            <sc-if value="{{ hasModels }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin:14px 0 8px;">Модель по умолчанию</div>
+              <div style="display:flex; flex-direction:column; gap:6px;">
+                <sc-for list="{{ aiModelOptions }}" as="m" hint-placeholder-count="3">
+                  <div onClick="{{ m.selectFn }}" style="{{ m.rowStyle }}">
+                    <div style="{{ m.radioStyle }}"></div>
+                    <div style="font-size:12.5px; font-weight:600;">{{ m.name }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin:14px 0 6px;">API Key</div>
+            <input type="password" value="{{ aiApiKey }}" onChange="{{ setAiApiKey }}" placeholder="sk-…" style="width:100%; border:1.5px solid var(--input-border); border-radius:10px; padding:10px 12px; font-size:13px; outline:none; margin-bottom:16px; background:var(--card); color:var(--text);" />
+
+            <div onClick="{{ saveAiSettings }}" style="{{ saveAiButtonStyle }}">
+              <sc-if value="{{ aiSaved }}" hint-placeholder-val="{{ false }}"><span>✓ Сохранено</span></sc-if>
+              <sc-if value="{{ aiNotSaved }}" hint-placeholder-val="{{ true }}"><span>Сохранить настройки</span></sc-if>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isChat }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; flex-direction:column; height:100%;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+              <div style="width:38px;height:38px;border-radius:50%;background:#1f9d55;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;">ИК</div>
+              <div style="font-size:15px; font-weight:800;">Игорь Крылов, тренер</div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px; flex:1;">
+              <sc-for list="{{ chatMessages }}" as="m" hint-placeholder-count="4">
+                <div style="{{ m.wrapStyle }}">
+                  <div style="{{ m.bubbleStyle }}">
+                    <sc-if value="{{ m.isQuestion }}" hint-placeholder-val="{{ false }}">
+                      <div style="font-size:9.5px; font-weight:800; text-transform:uppercase; color:#ff8c1a; margin-bottom:4px;">❓ Вопрос от тренера</div>
+                    </sc-if>
+                    {{ m.text }}
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:flex; gap:8px; margin-top:12px;">
+              <input value="{{ chatDraft }}" onChange="{{ setChatDraft }}" placeholder="Написать…" style="flex:1; border:1px solid var(--input-border); border-radius:10px; padding:10px 12px; font-size:13px; outline:none; background:var(--card); color:var(--text);" />
+              <div onClick="{{ sendChatMessage }}" style="background:#12181a; color:#fff; font-weight:700; font-size:13px; padding:10px 16px; border-radius:10px; cursor:pointer;">➤</div>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+
+      <!-- bottom tabs -->
+      <div style="display:flex; border-top:1px solid var(--card-border); background:var(--card); flex-shrink:0; padding:10px 12px 18px;">
+        <div onClick="{{ goToday }}" style="{{ tabTodayStyle }}">
+          <div style="font-size:18px;">🏃</div>
+          <div style="font-size:10.5px; font-weight:700;">Сегодня</div>
+        </div>
+        <div onClick="{{ goWeek }}" style="{{ tabWeekStyle }}">
+          <div style="font-size:18px;">📅</div>
+          <div style="font-size:10.5px; font-weight:700;">Неделя</div>
+        </div>
+        <div onClick="{{ goProgress }}" style="{{ tabProgressStyle }}">
+          <div style="font-size:18px;">📈</div>
+          <div style="font-size:10.5px; font-weight:700;">Прогресс</div>
+        </div>
+        <div onClick="{{ goChat }}" style="{{ tabChatStyle }}">
+          <div style="font-size:18px;">💬</div>
+          <div style="font-size:10.5px; font-weight:700;">Чат</div>
+          <sc-if value="{{ hasUnreadQuestion }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute; top:0; right:22px; width:9px; height:9px; border-radius:50%; background:#ff8c1a; animation: ap-pulse 1.8s infinite;"></div>
+          </sc-if>
+        </div>
+        <div onClick="{{ goSettings }}" style="{{ tabSettingsStyle }}">
+          <div style="font-size:18px;">⚙️</div>
+          <div style="font-size:10.5px; font-weight:700;">Настройки</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const WEEK_DAYS = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+const WEEK_DAYS_FULL = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье'];
+const TODAY_INDEX = 1; // Tuesday, matches trainer-side seed
+
+const GYM_DAY_TEXT = `Суставная разминка
+
+4 раунда (спокойно):
+- 10 Ротация + жим в наклоне
+- 5 Червяков с отжиманием
+- 20 Ножницы в позиции Холлоу
+- 5 Подтягиваний
+
+Отдых 3-5 мин
+
+5 раундов:
+- 10 Жимов штанги 15 кг стоя
+- 10 Колени к локтям на турнике
+- 15 Супермен
+- 10 Колени к груди на полу
+- 10 Отжиманий с выпрямлением рук вперед
+- 1 мин Отдых
+*работаем максимально интенсивно
+
+Растяжка`;
+
+const WEEK = [
+  { title:'Зал', date:'6 июля', status:'done', rawText: GYM_DAY_TEXT, hasReport:true, reportText:'Сделала всё по плану, было тяжело на третьем круге, но справилась. Самочувствие хорошее.', reportRpe:6 },
+  { title:'Интервалы 6х800м', date:'7 июля', status:'pending', rawText: `Разминка 15 минут лёгкого бега\n\n6 x 800м в темпе 3:55/км\nОтдых 400м трусцой между отрезками\n\nЗаминка 10 минут`, hasReport:false },
+  { title:'Восстановительный', date:'8 июля', status:'future', rawText: `6 км в очень лёгком темпе\nПульс не выше Zone 1-2`, hasReport:false },
+  { title:'Темповая', date:'9 июля', status:'future', rawText: `Разминка 10 минут\n5 км в темпе 4:20/км\nЗаминка 10 минут`, hasReport:false },
+  { title:'Зал', date:'10 июля', status:'future', rawText: `Разминка 10 минут\n\nСиловая часть, 3 круга:\n- Присед со штангой\n- Тяга в наклоне\n- Планка 60 сек`, hasReport:false },
+  { title:'Длительная 16км', date:'11 июля', status:'future', rawText: `16 км в спокойном темпе\nПоследние 3 км чуть быстрее целевого`, hasReport:false },
+  { title:'Отдых', date:'12 июля', status:'future', rawText:'', hasReport:false },
+];
+
+function toLines(text) {
+  if (!text) return [];
+  return text.split('\n').map(line => {
+    const trimmed = line.trim();
+    if (!trimmed) return { text:'', bullet:false, plain:false, blank:true };
+    if (trimmed.startsWith('- ')) return { text: trimmed.slice(2), bullet:true, plain:false, blank:false };
+    return { text: line, bullet:false, plain:true, blank:false };
+  });
+}
+
+const BASE_MONDAY = new Date(2026, 6, 6);
+function addDays(date, days) { const d = new Date(date); d.setDate(d.getDate() + days); return d; }
+function formatRuDate(date) { return date.toLocaleDateString('ru-RU', { day:'numeric', month:'long' }); }
+function weekRangeLabelFor(offset) {
+  const start = addDays(BASE_MONDAY, offset * 7);
+  const end = addDays(start, 6);
+  const startStr = start.toLocaleDateString('ru-RU', { day:'numeric', month: start.getMonth()===end.getMonth() ? undefined : 'long' });
+  const endStr = end.toLocaleDateString('ru-RU', { day:'numeric', month:'long' });
+  return `${startStr} – ${endStr}`;
+}
+function datesForOffset(offset) {
+  return Array.from({ length:7 }, (_, i) => formatRuDate(addDays(BASE_MONDAY, offset * 7 + i)));
+}
+function dateToOffsetAndIndex(dateStr) {
+  const picked = new Date(dateStr + 'T00:00:00');
+  const diffDays = Math.round((picked - BASE_MONDAY) / 86400000);
+  const offset = Math.floor(diffDays / 7);
+  const index = ((diffDays % 7) + 7) % 7;
+  return { offset, index };
+}
+function weekForOffset(offset) {
+  const dates = datesForOffset(offset);
+  if (offset === 0) return WEEK.map((d, i) => ({ ...d, date: dates[i] }));
+  if (offset < 0) return WEEK.map((d, i) => ({ ...d, date: dates[i], status: d.rawText ? 'done' : 'rest', hasReport: !!d.rawText, reportText: d.reportText || 'Тренировка выполнена по плану.', reportRpe: d.reportRpe || 6 }));
+  return WEEK.map((d, i) => ({ ...d, date: dates[i], status: d.rawText ? 'future' : 'rest', rawText: '', hasReport:false }));
+}
+
+const MONTH_DAILY_KM = [4,0,6,5,0,8,3,0,5,6,4,0,7,9,0,5,6,3,0,8,5,4,0,6];
+const YEAR_MONTHLY_KM = [
+  { label:'Янв', km:142 }, { label:'Фев', km:158 }, { label:'Мар', km:171 },
+  { label:'Апр', km:164 }, { label:'Май', km:189 }, { label:'Июн', km:176 },
+  { label:'Июл', km:62 },
+];
+const RECORDS = [
+  { icon:'🏅', value:'19:42', label:'Лучшее время 5 км', date:'12 мая 2026' },
+  { icon:'🏅', value:'41:05', label:'Лучшее время 10 км', date:'28 марта 2026' },
+  { icon:'💪', value:'24 раза', label:'Рекорд в подтягиваниях', date:'3 июня 2026' },
+  { icon:'🔥', value:'12 раз', label:'Рекорд "выход силой"', date:'20 июня 2026' },
+];
+
+function getTokens(mode) {
+  return mode === 'dark' ? {
+    bg:'#15191a', card:'#1e2427', cardBorder:'#2b3236', text:'#eef1ef',
+    muted:'#8fa19c', mutedStrong:'#c7d0cd', divider:'#262d30', inputBorder:'#333c40',
+    soft:'#242b2e', soft2:'#272f32',
+    reportBg:'#12281b', reportBorder:'#204a30', reportText:'#8fd6ac',
+    doneBg:'#163523', doneText:'#3ecb7b', pendingBg:'#3a2f12', pendingText:'#e0b23d',
+    missedBg:'#3a1c20', missedText:'#f2828f', restBg:'#272f32', restText:'#aab6b2',
+    bubbleNeutralBg:'#262d30', bubbleQuestionBg:'#3a2f12',
+    statPaceBg:'#163523', statHrBg:'#16223a',
+    chartArea:'#163523', chartBarInactive:'#233229',
+    segSelectedBg:'#eef1ef', segSelectedText:'#12181a',
+  } : {
+    bg:'#f6f7f5', card:'#ffffff', cardBorder:'#e7ece5', text:'#12181a',
+    muted:'#8a9a96', mutedStrong:'#42504d', divider:'#eef0ec', inputBorder:'#e0e5dd',
+    soft:'#f6f7f5', soft2:'#e7ece5',
+    reportBg:'#f0f9f3', reportBorder:'#cdeeda', reportText:'#1a4d2e',
+    doneBg:'#e6f7ec', doneText:'#1f9d55', pendingBg:'#fff3d9', pendingText:'#8a6d1a',
+    missedBg:'#fdeaec', missedText:'#c23b4a', restBg:'#eef0ec', restText:'#5b6b68',
+    bubbleNeutralBg:'#f0f2ee', bubbleQuestionBg:'#fff6ea',
+    statPaceBg:'#eef7f0', statHrBg:'#eef2fb',
+    chartArea:'#e6f7ec', chartBarInactive:'#cfe9d8',
+    segSelectedBg:'#12181a', segSelectedText:'#ffffff',
+  };
+}
+
+function getStatusMeta(status, T) {
+  const map = {
+    done: { label:'Выполнено', color:T.doneText, bg:T.doneBg },
+    pending: { label:'Сегодня', color:T.pendingText, bg:T.pendingBg },
+    missed: { label:'Пропущено', color:T.missedText, bg:T.missedBg },
+    rest: { label:'Отдых', color:T.restText, bg:T.restBg },
+    future: { label:'Скоро', color:T.restText, bg:T.restBg },
+  };
+  return map[status];
+}
+
+function mockDetectModels(url) {
+  const u = (url || '').toLowerCase();
+  if (u.includes('openai')) return ['gpt-4.1', 'gpt-4.1-mini', 'gpt-4o'];
+  if (u.includes('anthropic')) return ['claude-opus-4', 'claude-sonnet-4', 'claude-haiku-4'];
+  if (u.includes('openrouter')) return ['meta-llama/llama-3.1-70b', 'mistralai/mixtral-8x22b', 'google/gemini-pro-1.5'];
+  if (u.trim()) return ['default-model'];
+  return [];
+}
+
+function loadAiSettings() {
+  try {
+    const raw = typeof localStorage !== 'undefined' ? localStorage.getItem('reps_ai_settings') : null;
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) { return {}; }
+}
+
+class Component extends DCLogic {
+  state = {
+    tab: 'today',
+    homeStyle: 'full',
+    subView: 'task',
+    activeDayIndex: TODAY_INDEX,
+    theme: (typeof localStorage !== 'undefined' && localStorage.getItem('reps_theme')) || 'light',
+    chatMessages: [
+      { from:'coach', text:'Привет! Как самочувствие перед интервалами сегодня?', isQuestion:true },
+    ],
+    chatDraft: '',
+    aiApiUrl: loadAiSettings().apiUrl || '',
+    aiApiKey: loadAiSettings().apiKey || '',
+    aiModels: loadAiSettings().models || [],
+    aiSelectedModel: loadAiSettings().model || '',
+    aiDetecting: false,
+    aiSaved: false,
+    weekOffset: 0,
+  };
+
+  goToday = () => this.setState({ tab:'today' });
+  goWeek = () => this.setState({ tab:'week' });
+  goProgress = () => this.setState({ tab:'progress' });
+  goSettings = () => this.setState({ tab:'settings' });
+  goChat = () => {
+    const msgs = this.state.chatMessages.map(m => ({ ...m, isQuestion:false }));
+    this.setState({ tab:'chat', chatMessages: msgs });
+  };
+
+  setAiApiUrl = (e) => this.setState({ aiApiUrl: e.target.value, aiSaved:false });
+  setAiApiKey = (e) => this.setState({ aiApiKey: e.target.value, aiSaved:false });
+  detectModels = () => {
+    if (this.state.aiDetecting) return;
+    this.setState({ aiDetecting:true });
+    setTimeout(() => {
+      const models = mockDetectModels(this.state.aiApiUrl);
+      this.setState({ aiDetecting:false, aiModels: models, aiSelectedModel: models[0] || '', aiSaved:false });
+    }, 900);
+  };
+  selectAiModel = (m) => this.setState({ aiSelectedModel: m, aiSaved:false });
+  saveAiSettings = () => {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('reps_ai_settings', JSON.stringify({ apiUrl:this.state.aiApiUrl, apiKey:this.state.aiApiKey, models:this.state.aiModels, model:this.state.aiSelectedModel }));
+    }
+    this.setState({ aiSaved:true });
+  };
+
+  prevWeek = () => this.setState({ weekOffset: this.state.weekOffset - 1 });
+  nextWeek = () => this.setState({ weekOffset: this.state.weekOffset + 1 });
+  setDatePick = (e) => {
+    if (!e.target.value) return;
+    const { offset, index } = dateToOffsetAndIndex(e.target.value);
+    this.setState({ weekOffset: offset, activeDayIndex: index, tab: this.state.tab === 'week' ? 'week' : this.state.tab });
+  };
+
+  toggleTheme = () => {
+    const next = this.state.theme === 'dark' ? 'light' : 'dark';
+    if (typeof localStorage !== 'undefined') localStorage.setItem('reps_theme', next);
+    this.setState({ theme: next });
+  };
+
+
+  toggleHomeStyle = () => this.setState({ homeStyle: this.state.homeStyle === 'full' ? 'tabs' : 'full' });
+  setSubTask = () => this.setState({ subView:'task' });
+  setSubReport = () => this.setState({ subView:'report' });
+  selectDay = (i) => this.setState({ activeDayIndex:i, subView:'task' });
+
+  setChatDraft = (e) => this.setState({ chatDraft: e.target.value });
+  sendChatMessage = () => {
+    if (!this.state.chatDraft.trim()) return;
+    this.setState({ chatMessages: [...this.state.chatMessages, { from:'athlete', text:this.state.chatDraft }], chatDraft:'' });
+  };
+
+  renderVals() {
+    const s = this.state;
+    const T = getTokens(s.theme);
+    const weekStrip = WEEK.map((d, i) => {
+      const active = i === s.activeDayIndex;
+      const meta = getStatusMeta(d.status, T);
+      return {
+        label: WEEK_DAYS[i],
+        chipStyle: `flex-shrink:0; width:42px; padding:8px 0; border-radius:12px; text-align:center; cursor:pointer; background:${active ? T.segSelectedBg : T.card}; color:${active ? T.segSelectedText : T.text}; border:1px solid ${active ? T.segSelectedBg : T.cardBorder};`,
+        dotStyle: `width:6px;height:6px;border-radius:50%;background:${meta.color};margin:4px auto 0;`,
+        selectFn: () => this.selectDay(i),
+      };
+    });
+
+    const weekOffsetDay = weekForOffset(s.weekOffset);
+    const raw = weekOffsetDay[s.activeDayIndex];
+    const meta = getStatusMeta(raw.status, T);
+    const isToday = s.activeDayIndex === TODAY_INDEX && s.weekOffset === 0;
+    const isPastOrToday = s.weekOffset < 0 || (s.weekOffset === 0 && s.activeDayIndex <= TODAY_INDEX);
+    const activeDay = {
+      ...raw,
+      dayFull: WEEK_DAYS_FULL[s.activeDayIndex],
+      titleSuffix: raw.title ? ' — ' + raw.title : '',
+      hasPlan: !!raw.rawText,
+      lines: toLines(raw.rawText),
+      statusLabel: meta.label,
+      statusChipStyle: `font-size:11px;font-weight:700;color:${meta.color};background:${meta.bg};padding:4px 10px;border-radius:20px;`,
+      hasNoPlan: !raw.rawText,
+      emptyLabel: raw.status === 'future' ? 'План появится ближе к дате.' : 'День отдыха.',
+      canReport: !!raw.rawText && isPastOrToday && !raw.hasReport,
+      showSubmittedReport: !!raw.hasReport,
+    };
+
+    const weekList = weekOffsetDay.map((d, i) => {
+      const m = getStatusMeta(d.status, T);
+      return { dayFull: WEEK_DAYS_FULL[i], titleSuffix: d.title ? ' — ' + d.title : '', date: d.date, statusLabel: m.label, statusChipStyle: `font-size:11px;font-weight:700;color:${m.color};background:${m.bg};padding:4px 10px;border-radius:20px;flex-shrink:0;` };
+    });
+
+    const chatMessages = s.chatMessages.map(m => ({
+      text: m.text,
+      isQuestion: !!m.isQuestion,
+      wrapStyle: `display:flex; ${m.from==='athlete' ? 'justify-content:flex-end;' : 'justify-content:flex-start;'}`,
+      bubbleStyle: `max-width:75%; padding:10px 13px; border-radius:14px; font-size:13.5px; line-height:1.5; ${m.from==='athlete' ? 'background:#12181a; color:#fff;' : (m.isQuestion ? `background:${T.bubbleQuestionBg}; border:1.5px solid #ff8c1a; color:${T.text};` : `background:${T.bubbleNeutralBg}; color:${T.text};`)}`,
+    }));
+
+    let cum = 0;
+    const cumKm = MONTH_DAILY_KM.map(v => (cum += v));
+    const monthTotalKm = cum;
+    const maxCum = Math.max(...cumKm, 1);
+    const n = cumKm.length;
+    const points = cumKm.map((v, i) => {
+      const x = (i / (n - 1)) * 300;
+      const y = 84 - (v / maxCum) * 74;
+      return [x, y];
+    });
+    const monthLinePath = points.map((p, i) => (i === 0 ? `M${p[0].toFixed(1)},${p[1].toFixed(1)}` : `L${p[0].toFixed(1)},${p[1].toFixed(1)}`)).join(' ');
+    const monthAreaPath = monthLinePath + ` L300,90 L0,90 Z`;
+
+    const maxMonthKm = Math.max(...YEAR_MONTHLY_KM.map(m => m.km), 1);
+    const yearBars = YEAR_MONTHLY_KM.map((m, i) => {
+      const isCurrent = i === YEAR_MONTHLY_KM.length - 1;
+      const pct = Math.max((m.km / maxMonthKm) * 100, 4);
+      return {
+        label: m.label,
+        barStyle: `width:100%; height:${pct.toFixed(0)}%; border-radius:5px; background:${isCurrent ? '#1f9d55' : T.chartBarInactive};`,
+      };
+    });
+    const yearTotalKm = YEAR_MONTHLY_KM.reduce((a, m) => a + m.km, 0);
+
+    return {
+      pageStyle: `width:100%; min-height:100vh; background:#e4e8e1; display:flex; align-items:flex-start; justify-content:center; padding:36px 16px; --bg:${T.bg}; --card:${T.card}; --card-border:${T.cardBorder}; --text:${T.text}; --muted:${T.muted}; --muted-strong:${T.mutedStrong}; --divider:${T.divider}; --input-border:${T.inputBorder}; --soft:${T.soft}; --soft2:${T.soft2}; --report-bg:${T.reportBg}; --report-border:${T.reportBorder}; --report-text:${T.reportText}; --stat-pace-bg:${T.statPaceBg}; --stat-hr-bg:${T.statHrBg}; --chart-area:${T.chartArea};`,
+      themeIcon: s.theme === 'dark' ? '☀️' : '🌙',
+      themeName: s.theme,
+      toggleTheme: this.toggleTheme,
+      isToday: s.tab === 'today',
+      isWeek: s.tab === 'week',
+      isProgress: s.tab === 'progress',
+      isChat: s.tab === 'chat',
+      isSettings: s.tab === 'settings',
+      goSettings: this.goSettings,
+      tabTodayStyle: `flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; cursor:pointer; color:${s.tab==='today' ? '#1f9d55' : '#8a9a96'};`,
+      tabWeekStyle: `flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; cursor:pointer; color:${s.tab==='week' ? '#1f9d55' : '#8a9a96'};`,
+      tabProgressStyle: `flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; cursor:pointer; color:${s.tab==='progress' ? '#1f9d55' : '#8a9a96'};`,
+      tabChatStyle: `flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; cursor:pointer; position:relative; color:${s.tab==='chat' ? '#1f9d55' : '#8a9a96'};`,
+      tabSettingsStyle: `flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; cursor:pointer; color:${s.tab==='settings' ? '#1f9d55' : '#8a9a96'};`,
+      goToday: this.goToday, goWeek: this.goWeek, goProgress: this.goProgress, goChat: this.goChat,
+      hasUnreadQuestion: s.chatMessages.some(m => m.isQuestion),
+
+      aiApiUrl: s.aiApiUrl, setAiApiUrl: this.setAiApiUrl,
+      aiApiKey: s.aiApiKey, setAiApiKey: this.setAiApiKey,
+      aiDetecting: s.aiDetecting, aiNotDetecting: !s.aiDetecting,
+      detectModels: this.detectModels,
+      detectButtonStyle: `text-align:center; background:${T.soft2}; color:${T.mutedStrong}; font-weight:700; font-size:12.5px; padding:10px; border-radius:10px; cursor:pointer;`,
+      hasModels: s.aiModels.length > 0,
+      aiModelOptions: s.aiModels.map(m => ({
+        name: m,
+        selectFn: () => this.selectAiModel(m),
+        rowStyle: `display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:10px; cursor:pointer; background:${s.aiSelectedModel===m ? T.soft2 : 'transparent'};`,
+        radioStyle: `width:14px;height:14px;border-radius:50%;border:2px solid ${s.aiSelectedModel===m ? '#1f9d55' : T.mutedStrong}; background:${s.aiSelectedModel===m ? '#1f9d55' : 'transparent'};`,
+      })),
+      saveAiSettings: this.saveAiSettings,
+      saveAiButtonStyle: `text-align:center; background:${s.aiSaved ? '#1f9d55' : '#12181a'}; color:#fff; font-weight:700; font-size:13px; padding:12px; border-radius:10px; cursor:pointer;`,
+      aiSaved: s.aiSaved, aiNotSaved: !s.aiSaved,
+
+      monthTotalKm, monthAreaPath, monthLinePath,
+      yearTotalKm, yearBars,
+      records: RECORDS,
+
+      todayDateLabel: new Date().toLocaleDateString('ru-RU', { day:'numeric', month:'long', weekday:'long' }),
+      homeStyleLabel: s.homeStyle === 'full' ? 'Лента' : 'Вкладки',
+      toggleHomeStyle: this.toggleHomeStyle,
+      isFullStyle: s.homeStyle === 'full',
+      isTabsStyle: s.homeStyle === 'tabs',
+      subTaskStyle: `flex:1; text-align:center; padding:8px 0; border-radius:8px; font-size:12.5px; font-weight:700; cursor:pointer; ${s.subView==='task' ? `background:${T.card}; color:${T.text}; box-shadow:0 1px 2px rgba(0,0,0,0.1);` : `color:${T.mutedStrong};`}`,
+      subReportStyle: `flex:1; text-align:center; padding:8px 0; border-radius:8px; font-size:12.5px; font-weight:700; cursor:pointer; ${s.subView==='report' ? `background:${T.card}; color:${T.text}; box-shadow:0 1px 2px rgba(0,0,0,0.1);` : `color:${T.mutedStrong};`}`,
+      setSubTask: this.setSubTask, setSubReport: this.setSubReport,
+      isSubTask: s.subView === 'task', isSubReport: s.subView === 'report',
+
+      weekStrip,
+      activeDay,
+      weekList,
+      weekRangeLabel: weekRangeLabelFor(s.weekOffset),
+      prevWeek: this.prevWeek,
+      nextWeek: this.nextWeek,
+      datePick: '',
+      setDatePick: this.setDatePick,
+
+      chatMessages,
+      chatDraft: s.chatDraft,
+      setChatDraft: this.setChatDraft,
+      sendChatMessage: this.sendChatMessage,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

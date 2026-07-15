@@ -32,14 +32,14 @@ def test_garmin_report_url_accepts_valid_https_url() -> None:
     assert "garmin.com" in url.value
 
 
-def test_garmin_report_url_rejects_non_garmin_host() -> None:
-    with pytest.raises(InvalidGarminUrlError):
-        GarminReportUrl("https://example.com/report")
+def test_garmin_report_url_accepts_strava_url() -> None:
+    url = GarminReportUrl("https://www.strava.com/activities/12345")
+    assert "strava.com" in url.value
 
 
-def test_garmin_report_url_rejects_http() -> None:
+def test_garmin_report_url_rejects_non_https() -> None:
     with pytest.raises(InvalidGarminUrlError):
-        GarminReportUrl("http://connect.garmin.com/activity/1")
+        GarminReportUrl("http://www.strava.com/activities/1")
 
 
 def test_weight_kg_accepts_valid_value() -> None:

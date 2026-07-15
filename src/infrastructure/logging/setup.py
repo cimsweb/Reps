@@ -24,6 +24,41 @@ class StructuredFormatter(logging.Formatter):
             payload["user_id"] = record.user_id
         if hasattr(record, "role"):
             payload["role"] = record.role
+        if hasattr(record, "imported_count"):
+            payload["imported_count"] = record.imported_count
+        for key, value in record.__dict__.items():
+            if key.startswith("_"):
+                continue
+            if key in {
+                "name",
+                "msg",
+                "args",
+                "levelname",
+                "levelno",
+                "pathname",
+                "filename",
+                "module",
+                "exc_info",
+                "exc_text",
+                "stack_info",
+                "lineno",
+                "funcName",
+                "created",
+                "msecs",
+                "relativeCreated",
+                "thread",
+                "threadName",
+                "processName",
+                "process",
+                "message",
+                "event",
+                "success",
+                "user_id",
+                "role",
+                "imported_count",
+            }:
+                continue
+            payload[key] = value
         if record.exc_info:
             payload["exception"] = self.formatException(record.exc_info)
         return json.dumps(payload, ensure_ascii=False)
@@ -96,3 +131,21 @@ def log_coaching_event(
         message,
         extra={"event": event, "success": success, "user_id": user_id},
     )
+
+
+def log_training_event(
+    logger: logging.Logger,
+    event: str,
+    *,
+    success: bool,
+    user_id: str | None = None,
+    message: str,
+) -> None:
+    """Log training plan and report events in a uniform format."""
+    level = logging.INFO if success else logging.WARNING
+    logger.log(
+        level,
+        message,
+        extra={"event": event, "success": success, "user_id": user_id},
+    )
+

@@ -1,0 +1,158 @@
+.week-navigator {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.week-navigator__controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.week-navigator__arrow {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 8px;
+    background: var(--color-bg-segmented);
+    color: var(--color-text-body);
+    font-size: 14px;
+    font-weight: var(--font-weight-bold);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.week-navigator__label {
+    font-size: 13px;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-body);
+    min-width: 150px;
+    text-align: center;
+}
+
+.week-navigator__date {
+    border: 1.5px solid var(--color-border-input);
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-size: 12.5px;
+    background: var(--color-white);
+    color: var(--color-text-primary);
+    outline: none;
+}
+
+.week-navigator--compact .week-navigator__arrow {
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
+}
+
+.week-navigator--compact .week-navigator__label {
+    font-size: 11.5px;
+    min-width: auto;
+    white-space: nowrap;
+}
+
+.week-navigator--compact .week-navigator__date {
+    padding: 5px 7px;
+    font-size: 11px;
+    width: 120px;
+}
+
+@media (min-width: 1024px) {
+    .athlete-week-screen .week-navigator,
+    .coach-athlete-screen .week-navigator {
+        max-width: 640px;
+    }
+}
+
+.ai-settings-screen {
+    display: grid;
+    gap: var(--space-4);
+    max-width: 560px;
+}
+
+.ai-settings-screen__subtitle {
+    margin: 0;
+    font-size: var(--font-size-md);
+    color: var(--color-text-muted);
+}
+
+.ai-settings-screen--compact .ai-settings-screen__subtitle {
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-1);
+}
+
+.ai-settings-screen__card {
+    display: grid;
+    gap: var(--space-3);
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+}
+
+.ai-settings-screen--compact .ai-settings-screen__card {
+    padding: var(--space-4);
+}
+
+.ai-settings-screen__section-label {
+    margin: var(--space-2) 0 var(--space-1);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+}
+
+.ai-settings-screen__detect-btn {
+    justify-self: start;
+}
+
+.ai-settings-screen__model-list {
+    display: grid;
+    gap: 6px;
+}
+
+.ai-settings-screen__model-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    border: 1.5px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-white);
+    color: var(--color-text-primary);
+    padding: 10px 12px;
+    font-size: 12.5px;
+    font-weight: var(--font-weight-semibold);
+    text-align: left;
+    cursor: pointer;
+}
+
+.ai-settings-screen__model-option--active {
+    border-color: var(--color-accent-green);
+    background: var(--color-success-bg);
+}
+
+.ai-settings-screen__model-radio {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--color-border-input);
+    flex-shrink: 0;
+}
+
+.ai-settings-screen__model-option--active .ai-settings-screen__model-radio {
+    border-color: var(--color-accent-green);
+    background: var(--color-accent-green);
+    box-shadow: inset 0 0 0 2px var(--color-white);
+}
+
+.ai-settings-screen__save-btn {
+    margin-top: var(--space-2);
+}

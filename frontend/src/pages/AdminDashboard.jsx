@@ -4,6 +4,10 @@ import { Link } from "react-router-dom";
 import { ApiError, fetchUsers } from "../api/client.js";
 import { useAuth } from "../auth/AuthContext.jsx";
 import { getToken } from "../auth/tokenStorage.js";
+import { EmptyState } from "../components/EmptyState.jsx";
+import { LoadingMessage } from "../components/LoadingMessage.jsx";
+import { StatusPage } from "../components/layout/StatusPage.jsx";
+import { Button, Card, ErrorBanner } from "../components/ui/index.js";
 
 export function AdminDashboard() {
   const { user, logout } = useAuth();
@@ -36,30 +40,30 @@ export function AdminDashboard() {
   }, []);
 
   return (
-    <main className="page">
-      <section className="card wide">
-        <header className="dashboard-header">
+    <StatusPage wide>
+      <Card className="admin-dashboard">
+        <header className="admin-dashboard__header">
           <div>
-            <h1>Кабинет администратора</h1>
-            <p>
+            <h1 className="admin-dashboard__title">Кабинет администратора</h1>
+            <p className="text-muted">
               {user.email} · {user.role}
             </p>
           </div>
-          <button type="button" onClick={logout}>
+          <Button variant="outline" onClick={logout}>
             Выйти
-          </button>
+          </Button>
         </header>
 
-        <h2>Пользователи</h2>
-        {loading ? <p className="status">Загрузка...</p> : null}
-        {error ? <p className="form-error">{error}</p> : null}
+        <h2 className="admin-dashboard__section-title">Пользователи</h2>
+        {loading ? <LoadingMessage /> : null}
+        {error ? <ErrorBanner message={error} /> : null}
         {!loading && !error && users.length === 0 ? (
-          <p className="status">Пользователи не найдены</p>
+          <EmptyState message="Пользователи не найдены." icon="👤" />
         ) : null}
         {!loading && !error && users.length > 0 ? (
           <>
-            <p className="meta">Всего: {total}</p>
-            <table className="users-table">
+            <p className="admin-dashboard__meta">Всего: {total}</p>
+            <table className="admin-dashboard__table">
               <thead>
                 <tr>
                   <th>Email</th>
@@ -80,10 +84,10 @@ export function AdminDashboard() {
           </>
         ) : null}
 
-        <p className="meta">
+        <p className="admin-dashboard__footer">
           Разделы тренера и спортсмена скрыты для admin UI. <Link to="/login">Сменить аккаунт</Link>
         </p>
-      </section>
-    </main>
+      </Card>
+    </StatusPage>
   );
 }
