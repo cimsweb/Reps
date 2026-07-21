@@ -21,6 +21,7 @@ import {
 import { getErrorMessage, isAiUnavailableError } from "../../utils/apiErrors.js";
 import { addDaysToDateString, toDateInputValue } from "../../utils/formatters.js";
 import { startOfWeek } from "../../utils/weekStrip.js";
+import { AiUnavailableBanner } from "../agent/AiUnavailableBanner.jsx";
 import { Button } from "../ui/Button.jsx";
 import { FieldError } from "../FieldError.jsx";
 import { Modal } from "../ui/Modal.jsx";
@@ -72,6 +73,7 @@ export function CoachAddWorkoutModal({
   const [saving, setSaving] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [error, setError] = useState("");
+  const [aiUnavailableDetails, setAiUnavailableDetails] = useState(null);
   const [rewriteDiff, setRewriteDiff] = useState(null);
   const [createDraft, setCreateDraft] = useState("");
 
@@ -204,6 +206,7 @@ export function CoachAddWorkoutModal({
   async function requestPlanDraft(prompt) {
     setAiLoading(true);
     setError("");
+    setAiUnavailableDetails(null);
     try {
       const token = getToken();
       const startDate = mode === "week" ? weekStartDate : formDate;
@@ -218,7 +221,11 @@ export function CoachAddWorkoutModal({
       return draftText?.trim() || null;
     } catch (aiError) {
       if (isAiUnavailableError(aiError)) {
-        setError("ИИ недоступен. Заполните текст вручную.");
+        setAiUnavailableDetails({
+          message: aiError.message,
+          requestPath: aiError.requestPath,
+          requestBody: aiError.requestBody,
+        });
       } else {
         setError(getErrorMessage(aiError, "Не удалось получить ответ ИИ"));
       }
@@ -426,6 +433,13 @@ export function CoachAddWorkoutModal({
             </Button>
           </>
         )}
+
+        {aiUnavailableDetails ? (
+          <AiUnavailableBanner
+            message="ИИ недоступен. Заполните текст вручную."
+            details={aiUnavailableDetails}
+          />
+        ) : null}
 
         <FieldError message={error} />
       </div>

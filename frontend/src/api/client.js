@@ -8,10 +8,12 @@ export class ApiError extends Error {
     this.status = status;
     this.code = code;
     this.fallback = extra.fallback;
+    this.requestPath = extra.requestPath ?? null;
+    this.requestBody = extra.requestBody ?? null;
   }
 }
 
-async function parseResponse(response) {
+async function parseResponse(response, requestMeta) {
   if (response.status === 204) {
     return null;
   }
@@ -20,12 +22,19 @@ async function parseResponse(response) {
   if (!response.ok) {
     throw new ApiError(response.status, data.error, data.message, {
       fallback: data.fallback,
+      requestPath: requestMeta.requestPath,
+      requestBody: requestMeta.requestBody,
     });
   }
   return data;
 }
 
 export async function apiRequest(path, { method = "GET", body, token } = {}) {
+  const requestPath = `${API_BASE}${path}`;
+  const requestMeta = {
+    requestPath,
+    requestBody: body ?? null,
+  };
   const headers = { "Content-Type": "application/json" };
   if (token) {
     headers.Authorization = `Bearer ${token}`;
@@ -33,16 +42,16 @@ export async function apiRequest(path, { method = "GET", body, token } = {}) {
 
   let response;
   try {
-    response = await fetch(`${API_BASE}${path}`, {
+    response = await fetch(requestPath, {
       method,
       headers,
       body: body ? JSON.stringify(body) : undefined,
     });
   } catch {
-    throw new ApiError(0, "network_error", "Сервер недоступен. Запустите API: npm run dev:api");
+    throw new ApiError(0, "network_error", "Сервер недоступен. Запустите API: npm run dev:api", requestMeta);
   }
 
-  return parseResponse(response);
+  return parseResponse(response, requestMeta);
 }
 
 export function registerUser(payload) {
