@@ -17,3 +17,12 @@ class ChatCompletion:
 
     content: str
     model: str
+
+
+@dataclass(frozen=True, slots=True)
+class AiProviderCredentials:
+    """Per-request LLM access settings from the user UI."""
+
+    api_key: str
+    base_url: str
+    model: str

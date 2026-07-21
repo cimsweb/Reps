@@ -6,6 +6,7 @@ from datetime import UTC, date, datetime
 from uuid import uuid4
 
 from application.dto.agent import AgentSessionView
+from application.dto.ai import AiProviderCredentials
 from application.ports.ai_service import AIService
 from application.security.training_access_guard import TrainingAccessGuard
 from application.services.agent_dialog_helpers import (
@@ -95,6 +96,7 @@ class StartPlanAgentSessionUseCase:
         athlete_id: UserId,
         start_date: date,
         initial_brief: str | None = None,
+        ai_credentials: AiProviderCredentials | None = None,
     ) -> AgentSessionView:
         self._access_guard.ensure_coach_can_access_athlete_training(coach_id, athlete_id)
         run_lazy_agent_session_cleanup(self._session_repository)
@@ -130,6 +132,7 @@ class StartPlanAgentSessionUseCase:
                 coach_id=coach_id,
                 session_id=session.id,
                 content=initial_brief,
+                ai_credentials=ai_credentials,
             )
         return build_session_view(
             session_id=session.id,
@@ -162,6 +165,7 @@ class SendPlanAgentMessageUseCase:
         coach_id: UserId,
         session_id: AgentSessionId,
         content: str,
+        ai_credentials: AiProviderCredentials | None = None,
     ) -> AgentSessionView:
         session = load_coach_plan_session(self._session_repository, session_id, coach_id)
         self._access_guard.ensure_coach_can_access_athlete_training(coach_id, session.athlete_id)
@@ -183,7 +187,10 @@ class SendPlanAgentMessageUseCase:
             start_date=session.start_date or date.today(),
         )
         chat_messages = build_chat_messages(system_prompt=system_prompt, history=messages)
-        ai_service = self._ai_service or build_ai_service(AgentSessionKind.PLAN_CREATION)
+        ai_service = self._ai_service or build_ai_service(
+            AgentSessionKind.PLAN_CREATION,
+            credentials=ai_credentials,
+        )
         reply = invoke_plan_agent_ai(ai_service, chat_messages)
         reply = enrich_plan_draft_reply(reply, start_date=session.start_date or date.today())
 
@@ -390,6 +397,7 @@ class SendReportAgentMessageUseCase:
         athlete_id: UserId,
         session_id: AgentSessionId,
         content: str,
+        ai_credentials: AiProviderCredentials | None = None,
     ) -> AgentSessionView:
         session = load_athlete_report_session(self._session_repository, session_id, athlete_id)
         workout_id = session.planned_workout_id
@@ -422,7 +430,10 @@ class SendReportAgentMessageUseCase:
             system_prompt=build_report_system_prompt(workout_context=workout_context),
             history=messages,
         )
-        ai_service = self._ai_service or build_ai_service(AgentSessionKind.REPORT_ASSISTANCE)
+        ai_service = self._ai_service or build_ai_service(
+            AgentSessionKind.REPORT_ASSISTANCE,
+            credentials=ai_credentials,
+        )
         reply = invoke_report_agent_ai(ai_service, chat_messages)
         append_assistant_message(
             self._message_repository,

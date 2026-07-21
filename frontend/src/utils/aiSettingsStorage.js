@@ -32,3 +32,19 @@ export function loadAiSettings() {
 export function saveAiSettings(settings) {
   window.localStorage.setItem(AI_SETTINGS_STORAGE_KEY, JSON.stringify(settings));
 }
+
+export function withAiProviderSettings(payload = {}) {
+  const settings = loadAiSettings();
+  const apiUrl = settings.apiUrl.trim();
+  const apiKey = settings.apiKey.trim();
+  const model = settings.model.trim();
+  if (!apiUrl || !apiKey || !model) {
+    return { ...payload };
+  }
+  return {
+    ...payload,
+    api_url: apiUrl,
+    api_key: apiKey,
+    model,
+  };
+}

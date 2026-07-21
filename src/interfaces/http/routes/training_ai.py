@@ -31,6 +31,7 @@ from domain.services.authorization import Permission
 from domain.value_objects.agent_session_id import AgentSessionId
 from domain.value_objects.planned_workout_id import PlannedWorkoutId
 from domain.value_objects.user_id import UserId
+from infrastructure.ai.ai_service_factory import resolve_ai_credentials
 from infrastructure.db.agent_repositories import (
     SqlAlchemyAgentMessageRepository,
     SqlAlchemyAgentSessionRepository,
@@ -187,6 +188,11 @@ def start_plan_agent_session(
         athlete_id=UserId(athlete_id),
         start_date=request.start_date,
         initial_brief=request.initial_brief,
+        ai_credentials=resolve_ai_credentials(
+            api_url=request.api_url,
+            api_key=request.api_key,
+            model=request.model,
+        ),
     )
     return _session_view_to_response(view)
 
@@ -212,6 +218,11 @@ def send_plan_agent_message(
         coach_id=authenticated_user.user.id,
         session_id=AgentSessionId(session_id),
         content=request.content,
+        ai_credentials=resolve_ai_credentials(
+            api_url=request.api_url,
+            api_key=request.api_key,
+            model=request.model,
+        ),
     )
     return _session_view_to_response(view)
 
@@ -398,6 +409,11 @@ def send_report_agent_message(
         athlete_id=authenticated_user.user.id,
         session_id=AgentSessionId(session_id),
         content=request.content,
+        ai_credentials=resolve_ai_credentials(
+            api_url=request.api_url,
+            api_key=request.api_key,
+            model=request.model,
+        ),
     )
     return _session_view_to_response(view)
 

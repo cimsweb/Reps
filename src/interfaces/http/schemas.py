@@ -271,10 +271,16 @@ class UpdateTrainingPlanRawTextResponse(BaseModel):
 class StartPlanAgentSessionRequest(BaseModel):
     start_date: date
     initial_brief: str | None = None
+    api_url: str | None = None
+    api_key: str | None = None
+    model: str | None = None
 
 
 class SendAgentMessageRequest(BaseModel):
     content: str
+    api_url: str | None = None
+    api_key: str | None = None
+    model: str | None = None
 
 
 class AgentMessageResponse(BaseModel):

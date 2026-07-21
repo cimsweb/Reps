@@ -1,3 +1,5 @@
+import { withAiProviderSettings } from "../utils/aiSettingsStorage.js";
+
 const API_BASE = "/api/v1";
 
 export class ApiError extends Error {
@@ -264,7 +266,7 @@ export function startPlanAgentSession(token, athleteId, payload) {
   return apiRequest(`/coach/athletes/${athleteId}/training-plans/ai/sessions`, {
     method: "POST",
     token,
-    body: payload,
+    body: withAiProviderSettings(payload),
   });
 }
 
@@ -272,7 +274,7 @@ export function sendPlanAgentMessage(token, sessionId, payload) {
   return apiRequest(`/coach/training-plans/ai/sessions/${sessionId}/messages`, {
     method: "POST",
     token,
-    body: payload,
+    body: withAiProviderSettings(payload),
   });
 }
 
@@ -306,7 +308,7 @@ export function sendReportAgentMessage(token, sessionId, payload) {
   return apiRequest(`/athlete/report/ai/sessions/${sessionId}/messages`, {
     method: "POST",
     token,
-    body: payload,
+    body: withAiProviderSettings(payload),
   });
 }
 
